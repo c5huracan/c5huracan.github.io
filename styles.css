@@ -1,8 +1,10 @@
 /* styles.css */
 :root {
-    --primary-color: #3498db;
-    --text-color: #333;
-    --background-color: #f4f4f4;
+    --primary-color: #6c5ce7;
+    --secondary-color: #00cec9;
+    --text-color: #2d3436;
+    --background-color: #f9f9f9;
+    --card-background: #ffffff;
 }
 
 * {
@@ -12,16 +14,18 @@
 }
 
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Poppins', sans-serif;
     line-height: 1.6;
     color: var(--text-color);
     background-color: var(--background-color);
 }
 
 header {
-    background-color: #fff;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    padding: 1rem;
+    background-color: var(--card-background);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
 nav {
@@ -30,10 +34,23 @@ nav {
     align-items: center;
     max-width: 1200px;
     margin: 0 auto;
+    padding: 1rem;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo .icon {
+    font-size: 1.5rem;
+    margin-right: 0.5rem;
+    color: var(--primary-color);
 }
 
 nav h1 {
     font-size: 1.5rem;
+    font-weight: 600;
 }
 
 nav ul {
@@ -42,12 +59,18 @@ nav ul {
 }
 
 nav ul li {
-    margin-left: 1rem;
+    margin-left: 1.5rem;
 }
 
 nav ul li a {
     text-decoration: none;
     color: var(--text-color);
+    font-weight: 400;
+    transition: color 0.3s ease;
+}
+
+nav ul li a:hover {
+    color: var(--primary-color);
 }
 
 main {
@@ -56,24 +79,54 @@ main {
     padding: 0 1rem;
 }
 
-section {
+#hero {
+    text-align: center;
+    padding: 4rem 0;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border-radius: 10px;
     margin-bottom: 2rem;
 }
 
-h2 {
+#hero h2 {
+    font-size: 2.5rem;
     margin-bottom: 1rem;
 }
 
+section {
+    margin-bottom: 3rem;
+}
+
+h2 {
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
 article {
-    background-color: #fff;
+    background-color: var(--card-background);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+article:hover {
+    transform: translateY(-5px);
+}
+
+.post-image {
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+}
+
+.post-content {
     padding: 1.5rem;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    margin-bottom: 1rem;
 }
 
 article h3 {
     margin-bottom: 0.5rem;
+    font-weight: 600;
 }
 
 .read-more {
@@ -81,19 +134,48 @@ article h3 {
     margin-top: 1rem;
     color: var(--primary-color);
     text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.read-more:hover {
+    color: var(--secondary-color);
+}
+
+.read-more i {
+    margin-left: 0.5rem;
 }
 
 .post-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1rem;
+    gap: 1.5rem;
 }
 
 footer {
-    background-color: #fff;
-    text-align: center;
-    padding: 1rem;
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    background-color: var(--card-background);
+    padding: 1.5rem 0;
+    box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1rem;
+}
+
+.social-icons a {
+    color: var(--text-color);
+    font-size: 1.2rem;
+    margin-left: 1rem;
+    transition: color 0.3s ease;
+}
+
+.social-icons a:hover {
+    color: var(--primary-color);
 }
 
 @media (max-width: 768px) {
@@ -109,5 +191,18 @@ footer {
     nav ul li {
         margin-left: 0;
         margin-right: 1rem;
+    }
+
+    #hero h2 {
+        font-size: 2rem;
+    }
+
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .social-icons {
+        margin-top: 1rem;
     }
 }
