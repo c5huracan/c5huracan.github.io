@@ -3,92 +3,216 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TechInsight Blog</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <title>Lossless Neural Compression Model</title>
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        /* Header styles */
+        .hero {
+            background: white;
+            padding: 3rem 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .metrics {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .metric-card {
+            background: #f0f4ff;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Navigation styles */
+        .nav-section {
+            background: white;
+            margin: 2rem auto;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .nav-item {
+            padding: 0.75rem;
+            background: #f8f9fa;
+            border-radius: 0.5rem;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: background-color 0.2s;
+        }
+
+        .nav-item:hover {
+            background: #f0f4ff;
+        }
+
+        /* Content styles */
+        .content {
+            background: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin: 2rem auto;
+        }
+
+        .highlights {
+            background: #f0f4ff;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .grid-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .grid-card {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+        }
+
+        /* Typography */
+        h1 {
+            font-size: 2.5rem;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            color: #1a202c;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #2d3748;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            color: #2d3748;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        ul {
+            list-style-position: inside;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 640px) {
+            .metrics {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <nav>
-            <div class="logo">
-                <span class="icon"><i class="fas fa-code"></i></span>
-                <h1>TechInsight</h1>
-            </div>
-            <div class="hamburger-menu">
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-            </div>
-            <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#blog">Blog</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <main>
-        <section id="hero">
-            <h2>Exploring the Digital Frontier</h2>
-            <p>Dive into the latest tech trends, coding insights, and digital innovations.</p>
-        </section>
-
-        <section id="featured-post">
-            <h2>Featured Post</h2>
-            <article class="featured">
-                <div class="post-image" style="background-image: url('https://source.unsplash.com/random/800x400?technology');"></div>
-                <div class="post-content">
-                    <h3>The Future of AI in Web Development</h3>
-                    <p>Explore how artificial intelligence is reshaping the landscape of web development and what it means for developers in the coming years...</p>
-                    <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
-                </div>
-            </article>
-        </section>
-
-        <section id="recent-posts">
-            <h2>Recent Posts</h2>
-            <div class="post-grid">
-                <article>
-                    <div class="post-image" style="background-image: url('https://source.unsplash.com/random/400x300?coding');"></div>
-                    <div class="post-content">
-                        <h3>Mastering React Hooks</h3>
-                        <p>Unlock the power of React Hooks to simplify your component logic and state management...</p>
-                        <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                </article>
-                <article>
-                    <div class="post-image" style="background-image: url('https://source.unsplash.com/random/400x300?javascript');"></div>
-                    <div class="post-content">
-                        <h3>Python vs JavaScript: A Deep Dive</h3>
-                        <p>Uncover the key differences and similarities between Python and JavaScript in this comprehensive comparison...</p>
-                        <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                </article>
-                <article>
-                    <div class="post-image" style="background-image: url('https://source.unsplash.com/random/400x300?server');"></div>
-                    <div class="post-content">
-                        <h3>Building Scalable Microservices</h3>
-                        <p>Learn best practices for designing and implementing a robust, scalable microservices architecture...</p>
-                        <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                </article>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <div class="footer-content">
-            <p>&copy; 2024 TechInsight Blog. All rights reserved.</p>
-            <div class="social-icons">
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-linkedin"></i></a>
-                <a href="#"><i class="fab fa-github"></i></a>
+    <header class="hero">
+        <div class="container">
+            <h1>Building a Lossless Neural Compression Model</h1>
+            <p style="font-size: 1.25rem; color: #666; margin-bottom: 1.5rem;">
+                Achieving 3.6x compression while maintaining perfect reconstruction for driving video token sequences
+            </p>
+            <div class="metrics">
+                <div class="metric-card">22% GPU Utilization</div>
+                <div class="metric-card">Lossless Compression</div>
+                <div class="metric-card">PyTorch Implementation</div>
             </div>
         </div>
-    </footer>
-<script src="script.js"></script>
+    </header>
+
+    <main class="container">
+        <nav class="nav-section">
+            <h2>Quick Navigation</h2>
+            <div class="nav-grid">
+                <button class="nav-item">Introduction</button>
+                <button class="nav-item">Technical Setup</button>
+                <button class="nav-item">Model Architecture</button>
+                <button class="nav-item">Training Infrastructure</button>
+            </div>
+        </nav>
+
+        <article class="content">
+            <h2>Project Overview</h2>
+            <p>
+                We developed a neural compression system for driving video tokens that achieves significant compression while maintaining perfect reconstruction. The model combines convolutional layers for spatial understanding with bidirectional LSTM for temporal patterns, using a novel dual-output design that predicts both tokens and confidence scores.
+            </p>
+
+            <div class="highlights">
+                <h3>Key Achievements</h3>
+                <ul>
+                    <li>3.2x compression ratio achieved</li>
+                    <li>Perfect reconstruction maintained</li>
+                    <li>6 minute training time for 10 epochs</li>
+                </ul>
+            </div>
+
+            <div class="grid-section">
+                <div class="grid-card">
+                    <h3>Technical Stack</h3>
+                    <ul>
+                        <li>PyTorch</li>
+                        <li>CUDA-enabled GPU</li>
+                        <li>Custom Dataset Management</li>
+                        <li>Bidirectional LSTM</li>
+                    </ul>
+                </div>
+                <div class="grid-card">
+                    <h3>Future Improvements</h3>
+                    <ul>
+                        <li>Increased batch size</li>
+                        <li>Larger model capacity</li>
+                        <li>Dynamic chunk sizing</li>
+                        <li>Transformer architecture</li>
+                    </ul>
+                </div>
+            </div>
+        </article>
+    </main>
 </body>
 </html>
-
