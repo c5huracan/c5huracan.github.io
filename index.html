@@ -12,18 +12,32 @@
             box-sizing: border-box;
         }
 
+        :root {
+            /* 2025 Color Palette */
+            --primary: #7C3AED;  /* Deep violet */
+            --primary-light: #EDE9FE;
+            --secondary: #2DD4BF;  /* Vibrant teal */
+            --accent: #F43F5E;  /* Coral red */
+            --background: #F9FAFB;
+            --surface: #FFFFFF;
+            --text: #1F2937;
+            --text-light: #6B7280;
+            --gradient-start: #7C3AED;
+            --gradient-end: #2DD4BF;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             line-height: 1.6;
-            color: #333;
-            background: #f8f9fa;
+            color: var(--text);
+            background: var(--background);
         }
 
         /* Header styles */
         .hero {
-            background: white;
-            padding: 3rem 1rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+            padding: 4rem 1rem;
+            color: white;
         }
 
         .container {
@@ -40,20 +54,89 @@
         }
 
         .metric-card {
-            background: #f0f4ff;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
             padding: 0.75rem 1rem;
-            border-radius: 0.5rem;
+            border-radius: 1rem;
             font-size: 0.9rem;
             font-weight: 500;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        /* Navigation styles */
-        .nav-section {
-            background: white;
-            margin: 2rem auto;
+        /* Code block styles */
+        pre {
+            background: #1F2937;
+            color: #E5E7EB;
             padding: 1.5rem;
             border-radius: 0.5rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        code {
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.9em;
+            background: var(--primary-light);
+            padding: 0.2em 0.4em;
+            border-radius: 0.2em;
+            color: var(--primary);
+        }
+
+        pre code {
+            background: transparent;
+            padding: 0;
+            color: inherit;
+        }
+
+        /* Content sections */
+        .section {
+            background: var(--surface);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin: 2rem 0;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid rgba(124, 58, 237, 0.1);
+        }
+
+        /* Typography */
+        h1 {
+            font-size: 2.5rem;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, white 0%, rgba(255,255,255,0.9) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem;
+            color: var(--primary);
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem;
+            color: var(--text);
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-light);
+        }
+
+        /* Navigation */
+        .nav-section {
+            background: var(--surface);
+            margin: -3rem auto 2rem;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            position: relative;
+            border: 1px solid rgba(124, 58, 237, 0.1);
         }
 
         .nav-grid {
@@ -65,103 +148,36 @@
 
         .nav-item {
             padding: 0.75rem;
-            background: #f8f9fa;
+            background: var(--primary-light);
+            color: var(--primary);
             border-radius: 0.5rem;
-            border: none;
+            border: 1px solid rgba(124, 58, 237, 0.2);
             text-align: left;
             cursor: pointer;
             font-size: 0.95rem;
-            transition: background-color 0.2s;
+            transition: all 0.2s;
         }
 
         .nav-item:hover {
-            background: #f0f4ff;
+            background: var(--primary);
+            color: white;
         }
 
-        /* Content styles */
-        .content {
-            background: white;
-            padding: 2rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            margin: 2rem auto;
-        }
-
-        .highlights {
-            background: #f0f4ff;
-            padding: 1.5rem;
-            border-radius: 0.5rem;
-            margin: 1.5rem 0;
-        }
-
-        .grid-section {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1.5rem;
-        }
-
-        .grid-card {
-            background: #f8f9fa;
-            padding: 1.5rem;
-            border-radius: 0.5rem;
-        }
-
-        /* Typography */
-        h1 {
-            font-size: 2.5rem;
-            line-height: 1.2;
-            margin-bottom: 1rem;
-            color: #1a202c;
-        }
-
-        h2 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: #2d3748;
-        }
-
-        h3 {
-            font-size: 1.25rem;
-            margin-bottom: 0.75rem;
-            color: #2d3748;
-        }
-
-        p {
-            margin-bottom: 1rem;
-        }
-
-        ul {
-            list-style-position: inside;
-            margin-bottom: 1rem;
-        }
-
-        li {
-            margin-bottom: 0.5rem;
-        }
-
-        @media (max-width: 640px) {
-            .metrics {
-                flex-direction: column;
-            }
-            
-            h1 {
-                font-size: 2rem;
-            }
-        }
+        /* Add the rest of your existing styles here */
     </style>
 </head>
 <body>
     <header class="hero">
         <div class="container">
             <h1>Building a Lossless Neural Compression Model</h1>
-            <p style="font-size: 1.25rem; color: #666; margin-bottom: 1.5rem;">
+            <p style="font-size: 1.25rem; color: rgba(255,255,255,0.9); margin-bottom: 1.5rem;">
                 Achieving 3.6x compression while maintaining perfect reconstruction for driving video token sequences
             </p>
             <div class="metrics">
                 <div class="metric-card">22% GPU Utilization</div>
-                <div class="metric-card">Lossless Compression</div>
-                <div class="metric-card">PyTorch Implementation</div>
+                <div class="metric-card">3.2x Compression Ratio</div>
+                <div class="metric-card">Perfect Reconstruction</div>
+                <div class="metric-card">6min Training Time</div>
             </div>
         </div>
     </header>
@@ -177,41 +193,51 @@
             </div>
         </nav>
 
-        <article class="content">
-            <h2>Project Overview</h2>
-            <p>
-                We developed a neural compression system for driving video tokens that achieves significant compression while maintaining perfect reconstruction. The model combines convolutional layers for spatial understanding with bidirectional LSTM for temporal patterns, using a novel dual-output design that predicts both tokens and confidence scores.
-            </p>
+        <article>
+            <section class="section" id="introduction">
+                <h2>Introduction</h2>
+                <p>Can we achieve high compression ratios while maintaining perfect reconstruction of our data? This challenge became particularly interesting when working with driving video token sequences, where both efficiency and accuracy are crucial.</p>
+                
+                <p>The data we're working with comes from Comma.ai's driving dataset, specifically their commavq repository. These sequences represent tokenized driving video frames, where each frame has been processed into a compact 8x16 grid of tokens, with each token using 10 bits to encode visual information.</p>
 
-            <div class="highlights">
-                <h3>Key Achievements</h3>
-                <ul>
-                    <li>3.2x compression ratio achieved</li>
-                    <li>Perfect reconstruction maintained</li>
-                    <li>6 minute training time for 10 epochs</li>
-                </ul>
-            </div>
+                <pre><code>CONFIG = {
+    'batch_size': 4,
+    'num_workers': 0,  # Optimized for Colab environment
+    'chunk_size': 15,
+    'learning_rate': 1e-4,
+    'num_epochs': 10,
+    'lossless_weight': 10.0,
+    'compression_target': 3.6,
+    'device': torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+}</code></pre>
+            </section>
 
-            <div class="grid-section">
-                <div class="grid-card">
-                    <h3>Technical Stack</h3>
-                    <ul>
-                        <li>PyTorch</li>
-                        <li>CUDA-enabled GPU</li>
-                        <li>Custom Dataset Management</li>
-                        <li>Bidirectional LSTM</li>
-                    </ul>
-                </div>
-                <div class="grid-card">
-                    <h3>Future Improvements</h3>
-                    <ul>
-                        <li>Increased batch size</li>
-                        <li>Larger model capacity</li>
-                        <li>Dynamic chunk sizing</li>
-                        <li>Transformer architecture</li>
-                    </ul>
-                </div>
-            </div>
+            <section class="section" id="model-architecture">
+                <h2>Model Architecture</h2>
+                <p>Our model architecture represents a carefully balanced approach to lossless video token compression, combining spatial and temporal understanding with a novel dual-output prediction system.</p>
+
+                <pre><code>class OptimizedContextModel(nn.Module):
+    def __init__(self, chunk_size=15):
+        super().__init__()
+        
+        # Spatial Encoder
+        self.spatial_encoder = nn.Sequential(
+            nn.Conv2d(1, 32, kernel_size=3, padding='same'),
+            nn.ReLU(),
+            nn.Conv2d(32, 64, kernel_size=3, padding='same')
+        )
+        
+        # Temporal Understanding
+        self.temporal_lstm = nn.LSTM(
+            input_size=64 * 8 * 16,
+            hidden_size=1024,
+            num_layers=1,
+            bidirectional=True,
+            batch_first=True
+        )</code></pre>
+            </section>
+
+            <!-- Add more sections with content and code samples -->
         </article>
     </main>
 </body>
