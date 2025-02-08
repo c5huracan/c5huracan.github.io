@@ -4,12 +4,13 @@
 
 @import "{{ site.theme }}";
 
-.svg-icon {
+.social-media-list .svg-icon {
   width: 16px;
   height: 16px;
   display: inline-block;
-  viewBox: 0 0 16 16;
-  overflow: visible;  // This prevents clipping
+  vertical-align: middle;
+  fill: currentColor;
+  transform: scale(1);  // Ensures full rendering
 }
 
 .post img {
