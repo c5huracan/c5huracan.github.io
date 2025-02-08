@@ -4,6 +4,10 @@
 
 @import "{{ site.theme }}";
 
+.svg-icon {
+  margin-right: 8px;  // Adjust this value to increase/decrease spacing
+}
+
 .post img {
         display: block;
         border:1px solid #021a40;
