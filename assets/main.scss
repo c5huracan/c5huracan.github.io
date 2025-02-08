@@ -4,8 +4,8 @@
 
 @import "{{ site.theme }}";
 
-.svg-icon {
-  margin-right: 64px;  // Adjust this value to increase/decrease spacing
+.svg-icon + a {
+  margin-left: 8px;  // This adds space after the icon, before the link
 }
 
 .post img {
