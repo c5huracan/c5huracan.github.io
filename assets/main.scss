@@ -4,8 +4,10 @@
 
 @import "{{ site.theme }}";
 
-.svg-icon + a {
-  margin-left: 8px;  // This adds space after the icon, before the link
+.svg-icon {
+  width: 16px;  // or try 20px
+  height: 16px;
+  display: inline-block;
 }
 
 .post img {
