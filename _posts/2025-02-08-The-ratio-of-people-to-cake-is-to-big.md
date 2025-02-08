@@ -1,4 +1,4 @@
-_# "The ratio of people to cake is too big." --Milton
+# "The ratio of people to cake is too big." --Milton
 
 Finally getting around to writing-up what I have been doing with solveit since completing the AoC puzzles earlier this year. For the last month or so, I have gone pretty far down the rabbit hole of trying to further compress the tokens from an existing driving video pipeline ultimately used to train a world model for the Comma AI [open source driver assistance system](https://github.com/commaai/commavq/tree/master/compression). __Note:__ The challenge is closed but I didn't let that stop me ;-)
 
@@ -22,4 +22,3 @@ I will tell you that I know of at least one big problem with that gist. If you k
 Personally, I still need to slowdown and work line-by-line to more thoroughly understanding what each variable and each line of code is doing. As many will know this is something that Jeremy has been teaching at least since 2016~2017 and likely longer. I am also know that I can be impatient, so I will need to continue to work on that as well! 
 
 I am personal very grateful for the early access to solveit (the tools and the techniques), this community, and my entire experience. Thank you all!
-_
