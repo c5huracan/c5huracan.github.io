@@ -4,6 +4,14 @@
 
 @import "{{ site.theme }}";
 
+.svg-icon {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  viewBox: 0 0 16 16;
+  overflow: visible;  // This prevents clipping
+}
+
 .post img {
         display: block;
         border:1px solid #021a40;
