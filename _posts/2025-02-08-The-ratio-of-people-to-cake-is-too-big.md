@@ -10,7 +10,7 @@ This particular pipeline begins with H.265 HEVC video coming off of a single fro
 ...and in case you need reminded of what a Hydra actually is:
 
 <p align="center">
-  ![Not the Nvidia Hydra](/images/hydra.jpg)
+  <img src="/images/hydra.jpg" alt="Not the Nvidia Hydra?">
 </p>
 <p align="center">Source: ??</p>
 
