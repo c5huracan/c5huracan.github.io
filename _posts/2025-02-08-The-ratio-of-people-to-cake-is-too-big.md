@@ -9,7 +9,7 @@ This particular pipeline begins with H.265 HEVC video coming off of a single fro
 
 ...and in case you need reminded of what a Hydra actually is:
 
-![Not the Nvidia Hydra](/images/hydra.jpg)
+<p align="center">![Not the Nvidia Hydra](/images/hydra.jpg)</p>
 <p align="center">Source: ??</p>
 
 I am really in no position to say which approach wins in the marketplace but I have a pretty good idea who is currently selling more hardware ;-) With that said, in the near-to-mid-term, it looks to me like there will continue to be room for both complex and hacker-friendly systems to flourish.
