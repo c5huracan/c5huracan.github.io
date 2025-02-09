@@ -26,6 +26,6 @@ While there is room for many improvements, here are what I consider the best bit
 
 I will tell you that I know of at least one big problem with that gist. If you know what it is and feel the need to respond please redact it so others can study and learn from it first. Any other feedback is appreciated.
 
-Personally, I still need to slowdown and work line-by-line to more thoroughly understanding what each variable and each line of code is doing. As many will know this is something that Jeremy has been teaching at least since 2016~2017 and likely longer. I am also know that I can be impatient, so I will need to continue to work on that as well! 
+Personally, I still need to slowdown and work line-by-line to more thoroughly understanding what each variable and what each line of code is doing. As many will know this is something that Jeremy has been teaching at least since 2016~2017 and likely longer. I also know that I can be impatient, so I will need to continue to work on that as well! 
 
-I am personal very grateful for the early access to solveit (the tools and the techniques), this community, and my entire experience. Thank you all!
+Also, I am personally very grateful for the early access to solveit (the tools and the techniques), this community, and my entire experience. Thank you all!
