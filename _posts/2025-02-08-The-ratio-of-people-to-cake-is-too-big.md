@@ -7,7 +7,7 @@ This particular pipeline begins with H.265 HEVC video coming off of a single fro
 ![Nvidia Hydra Architecture](/images/hydra.png)
 <p align="center">Source: Nvidia</p>
 
-...and in case you need reminded of what a Hydra actually is:
+...and in case you need a reminder of what a Hydra actually is:
 
 <p align="center">
   <img src="/images/hydra.jpg" alt="Not the Nvidia Hydra?">
