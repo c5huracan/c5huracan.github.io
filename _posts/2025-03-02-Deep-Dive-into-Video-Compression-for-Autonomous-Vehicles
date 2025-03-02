@@ -130,3 +130,745 @@ With this pipeline in place, I had a solid foundation for experimentation. The f
 
 This setup proved essential because, as I was about to discover, compressing already-compressed tokens would require trying a lot of different approaches before finding something that worked well.
 
+## Simple LZMA Compression: Starting with the Basics
+
+With my testing pipeline in place, I was ready to start experimenting with actual compression techniques. Like any good engineer, I decided to start with the simplest approach that might work - using LZMA (Lempel–Ziv–Markov chain Algorithm) compression directly on the token data.
+
+LZMA is a powerful general-purpose compression algorithm that's used in tools like 7-Zip. It combines dictionary compression (finding and referencing repeated patterns) with range encoding (a form of entropy coding). I figured it would give us a solid baseline to improve upon.
+
+The initial implementation couldn't have been simpler:
+
+```python
+def compress_tokens(tokens: np.ndarray) -> bytes:
+    """Compress tokens using simple LZMA compression"""
+    # Convert to bytes and compress
+    return lzma.compress(tokens.tobytes())
+```
+
+And the corresponding decompression:
+
+```python
+def decompress_bytes(x: bytes) -> np.ndarray:
+    """Decompress bytes using LZMA"""
+    # Decompress and convert back to array
+    decompressed_bytes = lzma.decompress(x)
+    tokens_flat = np.frombuffer(decompressed_bytes, dtype=np.int16)
+    return tokens_flat.reshape(1200, 8, 16)
+```
+
+Running this on my test dataset gave me a compression ratio of about 1.6x - not terrible, but a far cry from the 3.0x target. Still, it was a working start that perfectly preserved the original data.
+
+I noticed something interesting in the results: the compression ratio varied significantly between different video segments. Some compressed as well as 1.9x, while others barely hit 1.2x. This suggested that the compressibility depended heavily on the content of the driving footage - segments with more repetitive scenery (like highway driving) compressed better than complex urban environments.
+
+Looking to squeeze out a bit more performance, I experimented with LZMA's compression level parameter:
+
+```python
+def compress_tokens(tokens: np.ndarray) -> bytes:
+    """Compress tokens using LZMA with maximum compression level"""
+    return lzma.compress(tokens.tobytes(), preset=9)  # 9 is the highest compression level
+```
+
+This improved things slightly, pushing the average ratio to around 1.65x, but at the cost of slower compression speed. The trade-off wasn't terrible during development, but it would matter when processing the full dataset.
+
+I also tried different approaches to arranging the data before compression. The default NumPy memory layout might not be optimal for compression, so I experimented with different reshaping operations:
+
+```python
+def compress_tokens(tokens: np.ndarray) -> bytes:
+    """Compress tokens with transposed layout"""
+    # Reshape to a different layout that might compress better
+    tokens_reshaped = tokens.astype(np.int16).reshape(-1, 128).T.ravel()
+    return lzma.compress(tokens_reshaped.tobytes(), preset=9)
+```
+
+Surprisingly, this simple change made a noticeable difference, pushing the ratio up to around 1.7x on average. By transposing the data, we were essentially grouping similar token positions across frames together, which helped LZMA find more patterns to compress.
+
+While 1.7x compression was decent, it was clear that simple LZMA alone wouldn't get us to our 3.0x target. The tokens were already a compressed representation of the video, so finding further redundancy would require more sophisticated techniques.
+
+But this initial exploration wasn't a waste - it gave me a solid baseline and some valuable insights:
+
+1. The data had enough redundancy for at least moderate compression
+2. The layout of the data significantly affected compressibility
+3. Different driving scenarios had different compression potential
+
+Armed with these insights, I was ready to try more advanced approaches. But I kept the simple LZMA method in my back pocket - sometimes the simplest solutions turn out to be the most robust, even if they're not the most efficient.
+
+## Advanced Preprocessing Techniques: Transforming Data for Better Compression
+
+After establishing a baseline with simple LZMA compression, I was eager to try more sophisticated approaches. The key insight driving this next phase was that while general-purpose compression algorithms like LZMA are powerful, they don't have any domain-specific knowledge about our data. If we could transform the tokens in ways that exposed more patterns and redundancies, LZMA might be able to achieve much better compression.
+
+One of the first techniques I explored was delta encoding. This approach is based on a simple premise: store the differences between consecutive values rather than the values themselves. Since consecutive frames in a driving video often have similar content, I hoped that many of these differences would be small or even zero, making them highly compressible.
+
+```python
+def compress_tokens(tokens: np.ndarray) -> bytes:
+    """Compress tokens with delta encoding preprocessing"""
+    # Reshape to standard form
+    tokens_reshaped = tokens.astype(np.int16).reshape(-1, 128).T
+    
+    # Apply delta encoding (store differences between consecutive values)
+    delta_encoded = np.zeros_like(tokens_reshaped)
+    delta_encoded[:, 0] = tokens_reshaped[:, 0]  # Keep first column as-is
+    delta_encoded[:, 1:] = tokens_reshaped[:, 1:] - tokens_reshaped[:, :-1]
+    
+    # Compress with optimized LZMA settings
+    return lzma.compress(delta_encoded.ravel().tobytes(), preset=9)
+```
+
+The corresponding decompression function needed to reverse this process:
+
+```python
+def decompress_bytes(x: bytes) -> np.ndarray:
+    """Decompress bytes with delta decoding"""
+    # Decompress with LZMA
+    decompressed_bytes = lzma.decompress(x)
+    
+    # Convert back to array
+    tokens_flat = np.frombuffer(decompressed_bytes, dtype=np.int16)
+    delta_encoded = tokens_flat.reshape(128, -1)
+    
+    # Undo delta encoding
+    tokens_transposed = np.zeros_like(delta_encoded)
+    tokens_transposed[:, 0] = delta_encoded[:, 0]  # First column as-is
+    for i in range(1, delta_encoded.shape[1]):
+        tokens_transposed[:, i] = delta_encoded[:, i] + tokens_transposed[:, i-1]
+    
+    # Reshape to final form
+    return tokens_transposed.T.reshape(1200, 8, 16)
+```
+
+I was excited to test this approach, but the results were somewhat disappointing - the compression ratio actually decreased to around 1.26x. This was a head-scratcher until I realized something important: our tokens don't necessarily have the temporal coherence I had assumed. VQ-VAE tokens represent abstract visual features, not direct pixel values, so the relationship between consecutive frames isn't as straightforward as I'd thought.
+
+Not one to give up easily, I tried a different approach: context-aware dictionary methods. The idea was to identify different "scenes" in the driving footage (highway, urban, etc.) and build specialized dictionaries for each context:
+
+```python
+def _detect_scene_changes(self, frames):
+    """Detect significant changes in scene that warrant context switching"""
+    scene_boundaries = [0]  # Always include the start
+    
+    # Calculate frame-to-frame difference in token space
+    for i in range(1, len(frames)):
+        # Use token-level difference rather than pixel-level
+        diff = np.sum(frames[i] != frames[i-1]) / frames[i].size
+        
+        # If difference exceeds threshold, mark as scene boundary
+        if diff > 0.4:  # Threshold determined empirically
+            scene_boundaries.append(i)
+    
+    # Always include the end
+    if scene_boundaries[-1] != len(frames) - 1:
+        scene_boundaries.append(len(frames) - 1)
+    
+    return scene_boundaries
+```
+
+This approach was more complex, involving scene detection, dictionary building, and specialized compression for each scene. The implementation was substantial, but the core idea was to leverage domain-specific knowledge about driving videos - they tend to have distinct segments (like highway driving, city streets, etc.) that might compress better with tailored dictionaries.
+
+I also experimented with various data transformations, like applying different reshaping operations to group similar tokens together:
+
+```python
+# Try grouping tokens by their position in the frame
+tokens_by_position = tokens.transpose(1, 2, 0).reshape(128, -1)
+
+# Try grouping tokens by frame
+tokens_by_frame = tokens.reshape(1200, -1)
+```
+
+These different arrangements could expose patterns that might not be obvious in the original layout. For instance, grouping by position might reveal that certain parts of the frame (like the road surface) have more consistent tokens across frames.
+
+Another technique I tried was quantization - reducing the precision of the tokens to create more repeated patterns:
+
+```python
+# Quantize tokens to create more repeated patterns
+quantized_tokens = (tokens // quantization_factor) * quantization_factor
+```
+
+This approach was particularly interesting because it introduced a trade-off between compression ratio and data fidelity. A higher quantization factor would create more repeated patterns (better compression) but lose more information.
+
+After extensive testing, I found that none of these advanced preprocessing techniques consistently outperformed the simple transposed LZMA approach from earlier. Some worked well on specific segments but performed poorly on others. The delta encoding approach, which I had high hopes for, actually made things worse on average.
+
+This was a valuable lesson: sometimes more complex doesn't mean better. The tokens from the VQ-VAE were already a highly optimized representation, and many traditional compression techniques that work well on raw data didn't provide significant benefits here.
+
+But I wasn't ready to give up on reaching that 3.0x target just yet. If preprocessing wasn't the answer, perhaps I needed to look at the fundamental representation of the data itself.
+
+## Bit Packing Optimization: Getting Down to the Bits and Bytes
+
+After my adventures with preprocessing techniques yielded mixed results, I decided to take a step back and look at the problem from a more fundamental perspective. I had been focusing on finding patterns in the token values, but what about the way we were representing those tokens in the first place?
+
+A key insight came when I revisited the VQ-VAE documentation: these tokens were 10-bit values, but we were storing them as 16-bit integers (np.int16). That meant we were wasting 6 bits per token! With 1200 frames × 128 tokens per frame, that's over 900 kilobytes of wasted space in each segment.
+
+This realization led me to explore bit packing - the technique of storing multiple values in fewer bytes than they would normally require by using the exact number of bits needed for each value.
+
+The theory was straightforward: instead of using 16 bits for each 10-bit token, we could pack them more efficiently. For example, we could fit three 10-bit tokens into four bytes (32 bits) with 2 bits left over, instead of the six bytes (48 bits) they would normally require.
+
+```python
+def compress_tokens(tokens: np.ndarray) -> bytes:
+    """Compress tokens using bit packing and optimized compression"""
+    # Convert to uint16 to ensure proper bit operations
+    tokens_uint16 = tokens.astype(np.uint16)
+    
+    # Reshape to the format that's worked best so far
+    tokens_reshaped = tokens_uint16.reshape(-1, 128).T
+    
+    # Pack 10-bit tokens more efficiently
+    # Each pair of 10-bit values can fit in 20 bits (less than 3 bytes)
+    packed_data = bytearray()
+    flat_tokens = tokens_reshaped.ravel()
+    
+    # Process pairs of tokens
+    for i in range(0, len(flat_tokens) - 1, 2):
+        # Get two consecutive tokens
+        t1 = flat_tokens[i]
+        t2 = flat_tokens[i+1] if i+1 < len(flat_tokens) else 0
+        
+        # Pack into 3 bytes (24 bits, with 4 bits unused)
+        # First 10 bits of t1, then 10 bits of t2, then 4 unused bits
+        b1 = t1 & 0xFF  # Lower 8 bits of t1
+        b2 = ((t1 >> 8) & 0x03) | ((t2 & 0x3F) << 2)  # Upper 2 bits of t1 + lower 6 bits of t2
+        b3 = (t2 >> 6) & 0x0F  # Upper 4 bits of t2
+        
+        packed_data.extend([b1, b2, b3])
+    
+    # Apply optimized compression
+    compressed = lzma.compress(packed_data, preset=9)
+    
+    # Add a version marker for future compatibility
+    return b'\x02' + compressed
+```
+
+The decompression function needed to reverse this process:
+
+```python
+def decompress_bytes(x: bytes) -> np.ndarray:
+    """Decompress bytes with bit unpacking"""
+    # Check version marker
+    if x[0] == 2:
+        # Decompress the packed data
+        packed_data = lzma.decompress(x[1:])
+        
+        # Calculate the number of tokens based on packed data size
+        # Every 3 bytes contains 2 tokens
+        num_tokens = (len(packed_data) // 3) * 2
+        
+        # Create array to hold unpacked tokens
+        tokens = np.zeros(num_tokens, dtype=np.uint16)
+        
+        # Unpack the data
+        for i in range(0, len(packed_data) - 2, 3):
+            b1 = packed_data[i]
+            b2 = packed_data[i+1]
+            b3 = packed_data[i+2]
+            
+            # Extract the two tokens
+            t1 = b1 | ((b2 & 0x03) << 8)  # Lower 8 bits from b1 + upper 2 bits from b2
+            t2 = ((b2 >> 2) & 0x3F) | ((b3 & 0x0F) << 6)  # 6 bits from b2 + 4 bits from b3
+            
+            # Store in the array
+            idx = (i // 3) * 2
+            tokens[idx] = t1
+            if idx + 1 < num_tokens:
+                tokens[idx + 1] = t2
+        
+        # Reshape to the original format
+        tokens_reshaped = tokens.reshape(128, -1).T.reshape(1200, 8, 16)
+        return tokens_reshaped.astype(np.int16)
+    else:
+        # Fall back to standard decompression for older versions
+        decompressed_bytes = lzma.decompress(x)
+        tokens_flat = np.frombuffer(decompressed_bytes, dtype=np.int16)
+        tokens_transposed = tokens_flat.reshape(128, -1)
+        return tokens_transposed.T.reshape(1200, 8, 16)
+```
+
+This approach was theoretically promising - just by changing the representation, we could potentially save 37.5% of space before even applying LZMA compression. Combined with LZMA, I hoped this might get us closer to the 3.0x target.
+
+However, when I implemented and tested this approach, I ran into a major issue: decompression errors. The bit manipulation code was introducing subtle errors that corrupted the token values:
+
+```
+Decompression error for /path/to/file.npy:
+  - 21099 differences found
+  - Sample differences (idx, original, decompressed):
+    ((0, 0, 4), 739, 0)
+    ((0, 0, 5), 291, 0)
+    ((0, 0, 6), 364, 0)
+    ((0, 0, 7), 208, 0)
+    ((0, 0, 8), 993, 0)
+```
+
+I spent hours debugging the bit manipulation code, trying different approaches to packing and unpacking the bits. I even created a vectorized version using NumPy's operations to speed up the process:
+
+```python
+def compress_tokens(tokens: np.ndarray) -> bytes:
+    """Compress tokens using bit packing - vectorized version"""
+    # Convert to uint16 to ensure proper bit operations
+    tokens_uint16 = tokens.astype(np.uint16)
+    
+    # Reshape to the format that's worked best so far
+    tokens_reshaped = tokens_uint16.reshape(-1, 128).T
+    flat_tokens = tokens_reshaped.ravel()
+    
+    # Ensure even length by padding if necessary
+    if len(flat_tokens) % 2 == 1:
+        flat_tokens = np.append(flat_tokens, 0)
+    
+    # Reshape to pairs of tokens
+    token_pairs = flat_tokens.reshape(-1, 2)
+    
+    # Vectorized bit packing
+    b1 = token_pairs[:, 0] & 0xFF  # Lower 8 bits of first token
+    b2 = ((token_pairs[:, 0] >> 8) & 0x03) | ((token_pairs[:, 1] & 0x3F) << 2)
+    b3 = (token_pairs[:, 1] >> 6) & 0x0F  # Upper 4 bits of second token
+    
+    # Convert to bytes
+    packed_bytes = np.column_stack([b1, b2, b3]).ravel().astype(np.uint8).tobytes()
+    
+    # Apply optimized compression
+    compressed = lzma.compress(packed_bytes, preset=9)
+    
+    # Add a version marker for future compatibility
+    return b'\x02' + compressed
+```
+
+This vectorized version was dramatically faster (7-9x speedup), but still had the same corruption issues. After extensive debugging, I concluded that the bit packing approach, while theoretically sound, was too error-prone for this application. The complex bit manipulation required for packing and unpacking introduced too many opportunities for subtle bugs.
+
+This was a humbling experience - what seemed like a straightforward optimization turned into a debugging nightmare. It reminded me of an important lesson in software engineering: sometimes the simplest, most reliable solution is better than a theoretically more efficient but error-prone approach.
+
+In the end, I had to accept that bit packing, despite its theoretical advantages, wasn't going to work reliably in this context. I went back to the drawing board, wondering if there might be other approaches that could get us closer to our 3.0x target without sacrificing reliability.
+
+## Vectorization for Performance: Speeding Up the Pipeline
+
+While my bit packing experiments didn't yield the compression ratio improvements I'd hoped for, they did highlight another important aspect of the pipeline: performance. Processing thousands of video segments for autonomous driving systems isn't just about storage efficiency—it's also about computational efficiency. A compression algorithm that takes days to run isn't practical, no matter how good the compression ratio.
+
+My initial implementations were running painfully slow—about 1.28 examples per second. At that rate, processing the full dataset would take hours. This was particularly noticeable with the bit packing approach, where I was processing tokens one or two at a time in Python loops:
+
+```python
+# Process pairs of tokens - SLOW!
+for i in range(0, len(flat_tokens) - 1, 2):
+    # Get two consecutive tokens
+    t1 = flat_tokens[i]
+    t2 = flat_tokens[i+1] if i+1 < len(flat_tokens) else 0
+    
+    # Pack into 3 bytes (24 bits, with 4 bits unused)
+    b1 = t1 & 0xFF
+    b2 = ((t1 >> 8) & 0x03) | ((t2 & 0x3F) << 2)
+    b3 = (t2 >> 6) & 0x0F
+    
+    packed_data.extend([b1, b2, b3])
+```
+
+This kind of loop in Python is notoriously slow, especially when dealing with large arrays. The solution? Vectorization—the process of replacing loops with operations that work on entire arrays at once.
+
+NumPy is designed for exactly this kind of vectorized operation, and it can provide dramatic speedups by leveraging optimized C code under the hood. I refactored my bit packing code to use vectorized operations:
+
+```python
+# Vectorized bit packing - FAST!
+# Reshape to pairs of tokens
+token_pairs = flat_tokens.reshape(-1, 2)
+
+# Vectorized bit operations on entire arrays at once
+b1 = token_pairs[:, 0] & 0xFF  # Lower 8 bits of first token
+b2 = ((token_pairs[:, 0] >> 8) & 0x03) | ((token_pairs[:, 1] & 0x3F) << 2)
+b3 = (token_pairs[:, 1] >> 6) & 0x0F  # Upper 4 bits of second token
+
+# Convert to bytes in one operation
+packed_bytes = np.column_stack([b1, b2, b3]).ravel().astype(np.uint8).tobytes()
+```
+
+The results were remarkable—the vectorized version ran about 7x faster, processing over 9 examples per second. This was a game-changer for development speed, allowing me to test ideas much more rapidly.
+
+I applied the same vectorization principle to other parts of the pipeline. For example, my delta encoding implementation initially used a loop to compute differences between consecutive frames:
+
+```python
+# Non-vectorized delta encoding - SLOW!
+delta_encoded = np.zeros_like(tokens_reshaped)
+delta_encoded[:, 0] = tokens_reshaped[:, 0]  # Keep first column as-is
+for i in range(1, tokens_reshaped.shape[1]):
+    delta_encoded[:, i] = tokens_reshaped[:, i] - tokens_reshaped[:, i-1]
+```
+
+I replaced this with a vectorized version:
+
+```python
+# Vectorized delta encoding - FAST!
+delta_encoded = np.zeros_like(tokens_reshaped)
+delta_encoded[:, 0] = tokens_reshaped[:, 0]  # Keep first column as-is
+delta_encoded[:, 1:] = tokens_reshaped[:, 1:] - tokens_reshaped[:, :-1]
+```
+
+Even my temporal smoothing code for lossy compression got the vectorization treatment:
+
+```python
+# Vectorized temporal smoothing
+# Create shifted views of the data for comparison
+tokens_prev = tokens_reshaped[:-2]  # All but last two frames
+tokens_curr = tokens_reshaped[1:-1]  # Middle frames
+tokens_next = tokens_reshaped[2:]    # All but first two frames
+
+# Identify outliers using vectorized operations
+diff_prev = np.abs(tokens_curr - tokens_prev) > 100
+diff_next = np.abs(tokens_curr - tokens_next) > 100
+neighbors_similar = np.abs(tokens_prev - tokens_next) < 50
+
+# Create a mask for tokens to replace
+replace_mask = diff_prev & diff_next & neighbors_similar
+
+# Calculate replacement values (average of neighbors)
+replacements = (tokens_prev + tokens_next) // 2
+
+# Apply replacements where mask is True
+tokens_curr[replace_mask] = replacements[replace_mask]
+```
+
+This vectorized approach to temporal smoothing was not only faster but also more readable—the intent of the code is clearer when you can see the operations as high-level transformations rather than low-level loops.
+
+The performance improvements weren't just about development speed; they were also critical for the practical usability of the compression pipeline. A system that takes days to process a dataset isn't going to be adopted, no matter how good the compression ratio.
+
+I learned some key lessons about vectorization along the way:
+
+1. **Identify bottlenecks first**: Profile your code to find where the time is being spent before optimizing.
+2. **Think in terms of operations on entire arrays**: Instead of asking "how do I process each element?", ask "how do I transform this entire array?"
+3. **Use NumPy's built-in functions**: Functions like `np.where()`, `np.sum()`, and array slicing are highly optimized.
+4. **Avoid Python loops when possible**: Every time you write a `for` loop that iterates over array elements, ask if there's a vectorized alternative.
+5. **Measure, don't guess**: Always benchmark your optimizations to ensure they're actually improving performance.
+
+The final vectorized pipeline was processing examples at a rate of over 9 per second—a 7x improvement over the initial implementation. This made the entire development process more efficient and enjoyable, allowing for rapid experimentation and iteration.
+
+While vectorization didn't directly improve our compression ratio, it made the development process much more efficient, allowing us to explore more ideas in less time. Sometimes the most valuable optimizations aren't about the end result, but about how quickly you can get there.
+
+## Exploring Lossy Compression: Trading Perfection for Performance
+
+After repeated attempts at lossless compression and hitting a wall around 1.6x compression ratio, I decided to it was time to explore lossy compression. This was a significant philosophical shift—up until this point, I had been working under the constraint that every single token had to be preserved exactly. But what if we relaxed that requirement just a little bit?
+
+The key question became: could we achieve significantly better compression by allowing small, controlled changes to the token values that wouldn't meaningfully impact the downstream tasks of the world model?
+
+I started by implementing a lossy compression system with multiple "loss levels" that offered different trade-offs between compression ratio and data fidelity:
+
+```python
+def compress_tokens(tokens: np.ndarray, loss_level=1) -> bytes:
+    """Compress tokens using lossy compression with controllable loss level"""
+    # Convert to standard form
+    tokens_reshaped = tokens.astype(np.int16).reshape(1200, 128)
+    
+    # Apply lossy preprocessing based on loss level
+    if loss_level == 1:  # Very minimal loss
+        # Apply subtle temporal smoothing to remove outliers
+        # ...processing code...
+    
+    elif loss_level == 2:  # Moderate loss
+        # More aggressive smoothing + light quantization
+        # ...processing code...
+    
+    elif loss_level == 3:  # Higher loss, higher compression
+        # Aggressive smoothing + stronger quantization
+        # ...processing code...
+    
+    # Compress with standard technique
+    return lzma.compress(tokens_reshaped.ravel().tobytes(), preset=9)
+```
+
+For loss level 1, I implemented a very conservative approach that only modified obvious outlier tokens—tokens that were drastically different from both their temporal neighbors (previous and next frames at the same position):
+
+```python
+# Identify outliers using vectorized operations
+diff_prev = np.abs(tokens_curr - tokens_prev) > 100
+diff_next = np.abs(tokens_curr - tokens_next) > 100
+neighbors_similar = np.abs(tokens_prev - tokens_next) < 50
+
+# Create a mask for tokens to replace
+replace_mask = diff_prev & diff_next & neighbors_similar
+
+# Calculate replacement values (average of neighbors)
+replacements = (tokens_prev + tokens_next) // 2
+
+# Apply replacements where mask is True
+tokens_curr[replace_mask] = replacements[replace_mask]
+```
+
+This approach only modified tokens that stuck out like sore thumbs—values that were likely errors or anomalies rather than meaningful features. The idea was that these outliers might be breaking compression patterns and that smoothing them would improve compressibility without significantly affecting the information content.
+
+For loss level 2, I added quantization on top of the temporal smoothing:
+
+```python
+# Quantize tokens to create more repeated patterns
+tokens_reshaped = (tokens_reshaped // 2) * 2
+```
+
+This simple operation rounded each token to the nearest even number, effectively reducing the precision by one bit. The theory was that many small variations in token values might not be perceptually important, and quantizing them would create more repeated patterns for the compressor to exploit.
+
+Loss level 3 went even further, applying a median filter to smooth out temporal variations and more aggressive quantization:
+
+```python
+# Apply median filtering for temporal smoothing
+window_size = 3
+for i in range(128):  # For each token position
+    from scipy import ndimage
+    tokens_reshaped[:, i] = ndimage.median_filter(tokens_reshaped[:, i], size=2*window_size+1)
+
+# More aggressive quantization
+tokens_reshaped = (tokens_reshaped // 4) * 4
+```
+
+A median filter replaces each value with the median of its neighborhood, which is excellent for removing "salt and pepper" noise while preserving edges. The more aggressive quantization (rounding to multiples of 4) further reduced precision to create even more repetition.
+
+I also needed to modify the evaluation process to handle lossy compression. Instead of checking for exact equality between the original and decompressed tokens, I added a marker byte to indicate lossy compression and skipped the equality check:
+
+```python
+def decompress_example(example):
+    path = Path(example['path'])
+    with open(output_dir/path.name, 'rb') as f:
+        compressed_data = f.read()
+        
+    # Check if this is lossy compressed
+    is_lossy = compressed_data[0] & 0x80 > 0
+    
+    tokens = decompress_bytes(compressed_data)
+    np.save(output_dir/path.name, tokens, allow_pickle=False)
+    
+    # Skip exact equality check for lossy compression
+    if is_lossy:
+        # For lossy compression, we accept the differences
+        return example
+    
+    # For lossless compression, perform the usual check
+    # ...equality checking code...
+```
+
+The results were fascinating:
+
+- **Loss Level 1**: 1.64x compression ratio - slightly better than lossless with minimal data changes
+- **Loss Level 2**: 1.58x compression ratio - surprisingly, slightly worse than level 1
+- **Loss Level 3**: 2.85x compression ratio - nearly hitting our 3.0x target!
+
+The fact that level 2 performed worse than level 1 was a surprise. My theory is that the quantization introduced patterns that were actually harder for LZMA to compress, perhaps because it disrupted some natural patterns in the data.
+
+Level 3 was the most interesting—it got us very close to our 3.0x target, but at what cost? When I examined the decompressed tokens and the resulting video quality, I found that the aggressive smoothing and quantization had a significant impact on the visual quality. The video looked blurrier and lost some fine details.
+
+This led me to an important realization: there's no free lunch in compression. The closer we got to our 3.0x target, the more we had to sacrifice in terms of data fidelity.
+
+I also experimented with an intermediate level (2.5) that used a smaller median filter window and less aggressive quantization:
+
+```python
+elif loss_level == 2.5:  # Between moderate and aggressive
+    # Moderate temporal smoothing with medium window
+    window_size = 2
+    for i in range(128):
+        from scipy import ndimage
+        tokens_reshaped[:, i] = ndimage.median_filter(tokens_reshaped[:, i], size=2*window_size+1)
+    
+    # Less aggressive quantization
+    tokens_reshaped = (tokens_reshaped // 3) * 3
+```
+
+This offered a potentially better trade-off between compression and quality, though I didn't get to fully evaluate it.
+
+The lossy compression experiments taught me an important lesson about the fundamental trade-offs in compression. While we can push the compression ratio higher by sacrificing some data fidelity, we need to carefully consider how those changes affect the downstream applications. In the context of autonomous driving, even small changes to the visual data could potentially impact safety-critical decisions.
+
+In the end, I found myself appreciating the elegant simplicity of the lossless approach. While it didn't hit the ambitious 3.0x target, the ~1.6x compression it achieved was still valuable, and it came with the guarantee that no information was lost in the process.
+
+## Results and Analysis: What We Learned from Compressing Tokens
+
+After weeks of experimenting with different compression techniques, it's time to step back and analyze the results. What worked, what didn't, and what can we learn from this journey into video token compression?
+
+Let's start with a summary of the compression ratios achieved by the various approaches:
+
+| Approach | Compression Ratio | Lossless? | Processing Speed | Notes |
+|----------|------------------|-----------|-----------------|-------|
+| Simple LZMA | 1.59x | Yes | Fast | Baseline approach |
+| Transposed LZMA | 1.64x | Yes | Fast | Simple reshape before compression |
+| Delta Encoding | 1.26x | Yes | Medium | Surprisingly worse than baseline |
+| Bit Packing | N/A | No | Very Slow | Failed due to data corruption |
+| Zstandard | 1.42x | Yes | Fast | Alternative compression library |
+| Lossy Level 1 | 1.64x | No | Fast | Minimal smoothing of outliers |
+| Lossy Level 2 | 1.58x | No | Fast | Light quantization, worse results |
+| Lossy Level 3 | 2.85x | No | Medium | Aggressive smoothing, visible quality loss |
+
+The first insight is that our lossless compression approaches consistently hit a wall around 1.6x compression. This suggests we might be approaching the theoretical limit of lossless compression for this type of data. The VQ-VAE tokens are already a compressed representation of the video, so there's simply not that much redundancy left to exploit.
+
+What's particularly interesting is how the different preprocessing techniques affected the results. Transposing the data before compression gave a small but consistent improvement, while delta encoding—which I had high hopes for—actually made things worse. This highlights how counter-intuitive compression can be; techniques that work well for one type of data might be ineffective or even harmful for another.
+
+The bit packing approach was a fascinating failure. Theoretically, it should have provided significant benefits by using the exact number of bits needed for each token. But in practice, the complexity of the bit manipulation introduced subtle bugs that corrupted the data. This was a humbling reminder that sometimes the simplest solution is the most robust.
+
+The most dramatic gains came from lossy compression, particularly at level 3, where we achieved a 2.85x compression ratio—tantalizingly close to our 3.0x target. But this came at a significant cost in terms of data fidelity. The aggressive smoothing and quantization visibly degraded the video quality, raising serious questions about whether this approach would be suitable for safety-critical applications like autonomous driving.
+
+In terms of processing speed, our vectorization efforts paid off handsomely. The initial implementation processed about 1.28 examples per second, while the vectorized version handled over 9 examples per second—a 7x speedup. This improvement in development velocity was invaluable, allowing us to test more ideas in less time.
+
+One surprising finding was that different video segments had wildly different compressibility. Some compressed as well as 1.9x, while others barely hit 1.2x. This variance suggests that the content of the driving footage significantly impacts compressibility—highway driving with consistent scenery compresses better than complex urban environments with lots of variation.
+
+Another key insight was the trade-off between compression ratio, processing speed, and implementation complexity. The most sophisticated approaches often had diminishing returns in terms of compression ratio, while significantly increasing code complexity and decreasing robustness. The simple transposed LZMA approach, despite its modest compression ratio, had a lot to recommend it in terms of simplicity, speed, and reliability.
+
+The lossy compression experiments revealed a fundamental truth about compression: there's no free lunch. If you want significantly better compression ratios, you have to sacrifice something—in this case, data fidelity. The question then becomes: how much loss is acceptable for your specific application? For autonomous driving systems, where safety is paramount, the answer might be "very little."
+
+In the end, the most practical approach for this specific use case might be the simple transposed LZMA compression. While it doesn't hit the ambitious 3.0x target, its 1.64x compression ratio still provides meaningful savings in storage and transmission costs, with no loss of information and minimal implementation complexity.
+
+This project reinforced an important lesson in software engineering: sometimes the best solution isn't the most sophisticated or theoretically optimal one, but the one that best balances performance, reliability, and simplicity for the specific problem at hand.
+
+## Lessons Learned: Insights from the Compression Trenches
+
+This journey through the world of video token compression taught me several valuable lessons that extend far beyond this specific project. Here are the key insights I'm taking away:
+
+**1. Understand Your Data Before Optimizing**
+
+Perhaps the most important lesson was the necessity of deeply understanding the data you're working with. I initially approached this problem with standard compression techniques, assuming they would work well on any type of data. But VQ-VAE tokens aren't just any data—they're already a highly optimized representation of video frames.
+
+The tokens represent learned visual features, not raw pixel values, which means they have different statistical properties than typical image data. Techniques like delta encoding, which work beautifully for natural images, performed poorly here because the relationship between consecutive tokens isn't as straightforward as I'd assumed.
+
+The time I spent analyzing the token patterns and understanding their distribution was invaluable. It helped me avoid going too far down unproductive paths and guided my exploration toward more promising approaches.
+
+**2. Simple Solutions Often Win**
+
+After implementing increasingly complex compression strategies, the humble "transpose the data and apply LZMA" approach remained one of the most effective. This reinforced an important engineering principle: prefer simple solutions until they prove inadequate.
+
+The bit packing approach seemed theoretically superior—it should have saved 37.5% space before compression even started! But the implementation complexity introduced subtle bugs that were difficult to track down. Meanwhile, the simple transpose operation was robust, easy to understand, and delivered consistent results.
+
+In the real world, simplicity brings benefits beyond just code cleanliness. Simple solutions are easier to debug, maintain, and explain to others. They're more likely to be adopted and less likely to cause mysterious failures down the road.
+
+**3. Measure, Don't Guess**
+
+Throughout this project, my intuitions about what would work well were frequently wrong. I was sure delta encoding would be a winner, but it underperformed. I thought lossy level 2 would compress better than level 1, but it was actually worse.
+
+This reinforced the importance of measurement over intuition. By setting up a robust testing framework that could quickly evaluate different approaches, I was able to let the data guide my decisions rather than relying on assumptions.
+
+This principle applies equally to performance optimization. The vectorization efforts delivered dramatic speedups, but only because I identified the actual bottlenecks through measurement rather than optimizing based on guesses.
+
+**4. Consider the Full System Context**
+
+While focusing on maximizing the compression ratio, I initially overlooked other important factors like processing speed and implementation complexity. But in a real-world system, these factors matter tremendously.
+
+A compression algorithm that takes days to run or is prone to subtle bugs might not be worth a modest improvement in compression ratio. Similarly, a lossy approach that achieves great compression but compromises data quality might be unsuitable for safety-critical applications like autonomous driving.
+
+The best solution depends on the full context of the system—the available computational resources, the importance of data fidelity, the frequency of compression/decompression operations, and many other factors.
+
+**5. Recognize Fundamental Trade-offs**
+
+Perhaps the most profound lesson was recognizing the fundamental trade-offs inherent in compression. The lossy compression experiments made this crystal clear: you can achieve better compression ratios by sacrificing data fidelity, but there's no free lunch.
+
+This principle extends to other aspects of the project as well. More sophisticated algorithms might offer better compression but at the cost of increased complexity and reduced robustness. Vectorization improves performance but can make the code harder to understand.
+
+Recognizing these trade-offs and making conscious decisions about them is essential for effective engineering. Sometimes the right choice is to accept a "good enough" solution that balances multiple competing factors rather than optimizing single-mindedly for one metric.
+
+**6. Iterate Quickly and Learn from Failures**
+
+My most productive periods were when I could rapidly test different ideas and learn from both successes and failures. The development mode that allowed testing on a small subset of data was crucial for this rapid iteration.
+
+Even the approaches that didn't work out, like bit packing, taught me valuable lessons. The failures were often more educational than the successes, forcing me to deepen my understanding of the problem and refine my approach.
+
+This reinforced the value of a fast feedback loop in software development. The quicker you can test an idea and learn from the results, the more effective your exploration will be.
+
+**7. The Value of Domain Knowledge**
+
+Finally, this project highlighted the value of domain knowledge. Understanding the specific characteristics of driving videos and VQ-VAE tokens helped guide my exploration toward more promising approaches.
+
+For instance, knowing that driving footage often contains long stretches of similar scenery led me to explore temporal smoothing techniques. Understanding that VQ-VAE tokens represent abstract visual features rather than direct pixel values helped me interpret the results of different preprocessing techniques.
+
+Domain knowledge doesn't replace experimentation and measurement, but it provides a valuable compass to guide your exploration and help interpret the results.
+
+These lessons extend far beyond this specific compression project. They're principles that apply to software engineering, data science, and problem-solving in general. Sometimes the most valuable outcome of a challenging project isn't the immediate solution but the deeper insights you gain along the way.
+
+## Future Directions: Where Do We Go From Here?
+
+While our exploration of video token compression has yielded valuable insights and a practical solution, there are several promising avenues for future research and development. Here are some directions that could push this work further:
+
+**1. Hybrid Compression Approaches**
+
+One of the most promising directions would be to develop hybrid approaches that combine the best aspects of different compression techniques. For example, we could use different compression strategies for different parts of the data based on their characteristics:
+
+- Apply lossy compression selectively to less important regions of the frame (like the sky or distant objects)
+- Use lossless compression for safety-critical regions (like the road and nearby vehicles)
+- Employ different preprocessing techniques for different driving scenarios (highway vs. urban)
+
+This context-aware compression could potentially achieve better overall compression ratios while preserving the information that matters most for autonomous driving decisions.
+
+**2. Neural Compression Models**
+
+An exciting frontier would be to apply neural network-based compression specifically designed for VQ-VAE tokens. Since these tokens are already the output of a neural network, it makes sense that another neural network might be able to compress them efficiently.
+
+Recent advances in neural compression models like those from DeepMind and OpenAI have shown remarkable results for image and video compression. Training a similar model specifically for VQ-VAE tokens could potentially break through the ~1.6x lossless compression barrier we encountered.
+
+This approach would require significant training data and computational resources, but the potential gains could be substantial. The neural compressor could learn the specific patterns and redundancies in the token space that traditional algorithms miss.
+
+**3. Integration with the World Model**
+
+Perhaps the most intriguing direction would be to integrate the compression system directly with the world model that consumes these tokens. Since we know the downstream application, we could potentially design a compression scheme that preserves exactly the information the world model needs while discarding the rest.
+
+This might involve:
+- Analyzing which token patterns most influence the world model's predictions
+- Developing a custom lossy compression scheme that preserves these critical patterns
+- Creating an end-to-end evaluation system that measures the impact of compression on driving decisions rather than just token fidelity
+
+This approach acknowledges that perfect token reconstruction might not be necessary—what matters is preserving the information that affects the vehicle's behavior.
+
+**4. Specialized Hardware Acceleration**
+
+For production deployment, developing hardware-accelerated implementations of the compression and decompression algorithms could dramatically improve performance. This might involve:
+
+- CUDA implementations for NVIDIA GPUs
+- Custom FPGA designs for embedded systems
+- Optimized ARM NEON instructions for mobile processors
+
+The vectorization work we did provides a good starting point, but specialized hardware implementations could take performance to another level, potentially enabling real-time compression and decompression of token streams.
+
+**5. Adaptive Compression Based on Available Bandwidth**
+
+For systems that transmit these tokens over networks with varying bandwidth (like cellular connections in moving vehicles), an adaptive compression system could be valuable. This system would:
+
+- Monitor available bandwidth in real-time
+- Adjust compression parameters dynamically
+- Prioritize the most recent and relevant frames when bandwidth is limited
+
+This approach recognizes that the optimal compression strategy depends on the current context and available resources.
+
+**6. Exploring Alternative Base Compressors**
+
+While we experimented with LZMA and Zstandard, there are many other compression algorithms worth exploring:
+
+- Brotli, which often outperforms LZMA for web content
+- ZPAQ, which offers extremely high compression ratios at the cost of speed
+- Domain-specific compressors designed for numerical data
+
+A comprehensive benchmark of different base compressors with various preprocessing techniques could reveal combinations we haven't considered.
+
+**7. Theoretical Analysis of Token Compressibility**
+
+A deeper theoretical analysis of VQ-VAE token entropy and compressibility could provide insights into the fundamental limits of what's possible. This might involve:
+
+- Information-theoretic analysis of token distributions
+- Estimation of the true entropy of the token space
+- Mathematical modeling of the relationship between token patterns and driving scenarios
+
+This theoretical work could help guide future practical efforts by identifying which approaches are most promising and which are likely to hit fundamental limits.
+
+**8. Multi-Resolution Token Representations**
+
+Another interesting direction would be to explore multi-resolution representations of the token data:
+
+- Store some frames at full fidelity and interpolate between them
+- Maintain different resolution levels for different parts of the frame
+- Allow progressive decoding where a rough approximation is available quickly, with details filled in later
+
+This approach could be particularly valuable for applications where quick access to approximate data is more important than waiting for perfect reconstruction.
+
+The field of video token compression for autonomous driving is still in its early stages, with plenty of room for innovation and improvement. While our current solution provides practical value with its ~1.6x lossless compression ratio, these future directions could potentially push the boundaries much further, enabling more efficient storage, transmission, and processing of the vast amounts of data needed to train and operate autonomous vehicles.
+
+## Conclusion: Wrapping Up Our Compression Journey
+
+When I first embarked on this token compression adventure, I had visions of elegant algorithms that would magically squeeze these VQ-VAE tokens down to a third of their original size without losing a single bit of information. Reality, as it often does, had other plans. But while I didn't quite reach the ambitious 3.0x compression target I'd set for myself, this journey yielded something perhaps more valuable: a deeper understanding of the fundamental nature of compression and the practical trade-offs involved.
+
+The most successful lossless approach—transposing the data and applying LZMA compression—achieved a respectable 1.64x compression ratio. This means we can store the same amount of driving data in roughly 60% of the space, which is nothing to sneeze at when you're dealing with thousands of hours of driving footage. More importantly, this approach is robust, relatively simple, and preserves every bit of the original data.
+
+For applications where some data loss is acceptable, our lossy compression experiments pushed the ratio as high as 2.85x with level 3 compression, though with noticeable degradation in video quality. This highlights the fundamental trade-off in compression: you can always squeeze the data tighter if you're willing to lose some information, but there's no free lunch.
+
+Perhaps the most surprising aspect of this project was how the simplest approaches often outperformed more complex ones. Delta encoding, which I was sure would be a winner, actually made things worse. Bit packing, which seemed like a no-brainer given the 10-bit nature of the tokens, turned into a debugging nightmare. Meanwhile, the humble transpose operation consistently improved compression with minimal complexity.
+
+This reinforces an important lesson for any engineering project: start simple, measure everything, and only add complexity when it demonstrably improves results. It's a lesson I'll carry forward into future projects, whether they involve compression or not.
+
+The vectorization work was another highlight, dramatically improving processing speed from 1.28 examples per second to over 9 examples per second—a 7x speedup. This not only made the development process more efficient but also ensured the final solution was practical for real-world use.
+
+Looking ahead, there are many promising directions for further research. Neural compression models, hybrid approaches that combine different techniques, and tighter integration with the world model all have the potential to push compression ratios higher while preserving the information that matters most for autonomous driving.
+
+But even without these future improvements, the current solution provides meaningful value. A 1.64x compression ratio means 39% less storage space required, 39% less bandwidth needed for transmission, and potentially faster loading times for training and inference. These are tangible benefits that can help make autonomous driving systems more efficient and scalable.
+
+Beyond the specific compression techniques, this project reinforced the value of a systematic approach to problem-solving: understand the data deeply, establish a robust testing framework, iterate quickly on different approaches, measure everything, and always consider the full system context when making decisions.
+
+These principles apply far beyond compression and even beyond software engineering. They're fundamental to effective problem-solving in any domain, and they're lessons I'll carry forward into future projects.
+
+In the end, while I didn't quite reach the 3.0x compression target I'd initially set, I'm satisfied with what I accomplished. I developed a practical, robust solution that provides meaningful compression without data loss, and I gained valuable insights along the way. Sometimes the journey teaches you more than reaching the destination would have, and I suspect that's the case here.
+
+As for those VQ-VAE tokens? They're now 1.64x smaller, but they still contain all the information needed to help autonomous vehicles navigate our complex world. And that's a compression journey worth taking.
