@@ -16,7 +16,7 @@ Before diving into compression techniques, I needed to wrap my head around what 
 
 Each segment of data represents about a minute of driving footage captured at 20 frames per second, resulting in 1200 frames per segment. But instead of raw pixels, each frame is encoded as a grid of 8×16 tokens - 128 tokens total per frame. Each token is a 10-bit integer that essentially points to an entry in a learned codebook. Think of it as the neural network saying, "This patch of road looks like pattern #739" instead of storing all the pixel values.
 
-When I looked at the original encoder code (which solveit helped me understand), I found that the pipeline starts with H.265 video from a front-facing camera mounted under a car's rearview mirror. This video gets fed through the VQ-VAE encoder, which outputs these compact token representations.
+When I looked at the original encoder code, I found that the pipeline starts with H.265 video from a front-facing camera mounted under a car's rearview mirror. This video gets fed through the VQ-VAE encoder, which outputs these compact token representations.
 
 ```
 frames = read_video("../examples/sample_video_ecamera.hevc")
