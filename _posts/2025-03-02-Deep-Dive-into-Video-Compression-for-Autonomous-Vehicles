@@ -41,3 +41,92 @@ As I experimented with visualizing the token patterns, I noticed some interestin
 - Token distribution: The distribution of token values isn't uniform - some codebook entries appear much more frequently than others
 
 These observations gave me some initial ideas about where compression gains might be found. But I quickly realized that achieving our ambitious 3.0x compression target would require getting creative - we'd need to exploit every pattern and redundancy in the data, no matter how subtle.
+
+## Leveraging and tweaking Comma's Compression Pipeline: From Concept to Code
+
+With a better understanding of the data, I needed to set up a proper compression pipeline to experiment with different approaches. Like any good tinkerer, I wanted a system that would let me rapidly test ideas, measure results, and iterate quickly.
+
+My first step was to create a basic framework with compress.py and decompress.py files. The compress.py would handle taking the VQ-VAE tokens and squeezing them down, while decompress.py would do the reverse operation, hopefully giving back exactly what we put in (this lossless requirement would later become an interesting discussion point).
+
+```python
+def compress_tokens(tokens: np.ndarray) -> bytes:
+    """This is where the magic happens (or at least where I try to make it happen)"""
+    # Transform and compress the tokens somehow
+    return compressed_bytes
+
+def decompress_bytes(x: bytes) -> np.ndarray:
+    """This needs to perfectly reverse whatever compress_tokens does"""
+    # Decompress and restore the original tokens
+    return original_tokens
+```
+
+One of the first things I realized was that running compression tests on the full dataset would be painfully slow. When you're iterating on ideas, waiting minutes (or hours!) for results is a creativity killer. So I added a development mode that would only process a small subset of the data:
+
+```python
+# DEVELOPMENT MODE: Select small subset for faster testing
+dev_mode = True  # Set to False for full dataset processing
+if dev_mode:
+    # Select just 25 examples for quick development cycles
+    for split in ds:
+        ds[split] = ds[split].select(range(min(25, len(ds[split]))))
+    print(f"DEVELOPMENT MODE: Testing on {sum(len(ds[s]) for s in ds)} examples")
+```
+
+This simple change reduced my test cycles from minutes to seconds - a game-changer for rapid experimentation. I also added detailed reporting to see not just the overall compression ratio, but stats for individual files:
+
+```python
+# Print summary statistics
+print(f"\nCompression Statistics:")
+print(f"  Min: {min(all_rates):.2f}x")
+print(f"  Max: {max(all_rates):.2f}x")
+print(f"  Avg: {sum(all_rates)/len(all_rates):.2f}x")
+print(f"  Med: {sorted(all_rates)[len(all_rates)//2]:.2f}x")
+```
+
+Another critical component was error detection. When you're manipulating bytes and bits, it's frighteningly easy to make a small mistake that corrupts your data. I added detailed error reporting that would show exactly where decompression failed:
+
+```python
+if not np.all(decompressed == original):
+    # Find where the differences are
+    diff_mask = (decompressed != original)
+    num_diffs = np.sum(diff_mask)
+    diff_indices = np.where(diff_mask)
+    
+    # Get some example differences
+    sample_diffs = []
+    for i in range(min(5, len(diff_indices[0]))):
+        idx = tuple(dim[i] for dim in diff_indices)
+        sample_diffs.append((idx, original[idx], decompressed[idx]))
+    
+    error_msg = f"Decompression error for {path}:\n"
+    error_msg += f"  - {num_diffs} differences found\n"
+    error_msg += f"  - Sample differences (idx, original, decompressed):\n"
+    for diff in sample_diffs:
+        error_msg += f"    {diff}\n"
+```
+
+This detailed error reporting saved me countless hours - instead of just knowing something was wrong, I could see exactly which tokens were affected and how they were being changed.
+
+I also created a comprehensive testing framework that could evaluate different compression methods side by side. This was invaluable for comparing approaches and understanding their trade-offs:
+
+```python
+def test_compression_methods(file_path):
+    """Test different compression methods on a single file"""
+    # Define compression methods to test
+    compression_methods = {
+        "Minimal (Direct LZMA)": {...},
+        "Simple Transpose": {...},
+        "Delta Encoding": {...},
+        "Original Custom": {...}
+    }
+    
+    # Test each method and report results
+    for method_name, funcs in compression_methods.items():
+        print(f"\n==== Testing {method_name} ====")
+        # ...test and report results...
+```
+
+With this pipeline in place, I had a solid foundation for experimentation. The fast feedback loop meant I could try wild ideas without committing hours to each one. And the detailed error reporting meant I could quickly understand what was working and what wasn't.
+
+This setup proved essential because, as I was about to discover, compressing already-compressed tokens would require trying a lot of different approaches before finding something that worked well.
+
