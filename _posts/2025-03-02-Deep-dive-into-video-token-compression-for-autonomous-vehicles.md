@@ -44,7 +44,7 @@ As I experimented with visualizing the token patterns, I noticed some interestin
 
 These observations gave me some initial ideas about where compression gains might be found. But I quickly realized that achieving our ambitious 3.0x compression target would require getting creative - we'd need to exploit every pattern and redundancy in the data, no matter how subtle.
 
-## Leveraging and tweaking Comma's Compression Pipeline: From Concept to Code
+## Leveraging and tweaking Comma's Compression Pipeline Components
 
 With a better understanding of the data, I needed to set up a proper compression pipeline to experiment with different approaches. Like any good tinkerer, I wanted a system that would let me rapidly test ideas, measure results, and iterate quickly.
 
