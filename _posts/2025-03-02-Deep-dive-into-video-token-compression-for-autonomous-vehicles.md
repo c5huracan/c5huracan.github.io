@@ -1,6 +1,6 @@
 # Deep dive into video token compression for autonomous vehicles
 
-I've spent the last several weeks obsessing over a fascinating challenge: squeezing more compression out of already-compressed video tokens used for training autonomous driving systems. Like most rabbit holes I find myself in, this one started innocently enough with a simple question - "Can we further compress these VQ-VAE tokens?" - and quickly spiraled into a full-blown exploration of compression algorithms, bit manipulation, and the fundamental limits of information theory.
+__DRAFT__ I've spent the last several weeks obsessing over a fascinating challenge: squeezing more compression out of already-compressed video tokens used for training autonomous driving systems. Like most rabbit holes I find myself in, this one started innocently enough with a simple question - "Can we further compress these VQ-VAE tokens?" - and quickly spiraled into a full-blown exploration of compression algorithms, bit manipulation, and the fundamental limits of information theory.
 
 The tokens I've been working with come from Comma AI's driving system, where front-facing camera footage gets processed through a Vector Quantized Variational Autoencoder (VQ-VAE). This encoder transforms raw video into a compact representation - essentially a codebook of tokens that capture the essential visual information needed for their world model to make driving decisions. My challenge was to see if I could compress these tokens even further without losing critical information.
 
