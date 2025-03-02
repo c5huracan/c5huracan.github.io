@@ -1,4 +1,4 @@
-# Deep Dive into Video Token Compression for Autonomous Vehicles
+# Deep Dive into Video Compression for Autonomous Vehicles
 
 I've spent the last several weeks obsessing over a fascinating challenge: squeezing more compression out of already-compressed video tokens used for training autonomous driving systems. Like most rabbit holes I find myself in, this one started innocently enough with a simple question - "Can we further compress these VQ-VAE tokens?" - and quickly spiraled into a full-blown exploration of compression algorithms, bit manipulation, and the fundamental limits of information theory.
 
