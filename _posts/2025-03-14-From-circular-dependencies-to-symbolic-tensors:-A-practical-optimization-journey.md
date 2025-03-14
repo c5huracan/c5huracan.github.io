@@ -27,7 +27,7 @@ Traceback (most recent call last):
                          ^^^^^^
 NameError: name 'Tensor' is not defined
 ```
-The issue? A classic circular dependency problem. The code was trying to create Tensor objects at the module level, before the Tensor class itself was defined. This seemingly innocuous initialization issue was preventing the Winograd constants from being properly defined as symbolic tensors - a critical optimization technique.
+**The issue?** A classic circular dependency problem. The code was trying to create Tensor objects at the module level, before the Tensor class itself was defined. This seemingly innocuous initialization issue was preventing the Winograd constants from being properly defined as symbolic tensors - a critical optimization technique.
 
 ## The Promise: From Materialized to Symbolic
 
