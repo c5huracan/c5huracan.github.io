@@ -1,8 +1,10 @@
-# Introduction: "From Circular Dependencies to Symbolic Tensors: A Practical Optimization Journey"
+# "From Circular Dependencies to Symbolic Tensors: A Practical Optimization Journey"
 
-# TL;DR
+## TL;DR
 
 We fixed a circular dependency in tinygrad's Winograd convolution implementation by moving constant initialization into a module-level function called after the Tensor class is defined. A key improvement was eliminating explicit device and shape parameters from the constants, allowing them to remain symbolic until needed. This change gives tinygrad's compiler more freedom to optimize: constants can be materialized on the most appropriate device at runtime, operations can be fused more effectively, and memory usage becomes more efficient. The results showed modest but consistent improvements: 1.37-5.64% speed improvements across different workloads and a 90% reduction in performance variability for large workloads. The computation graph became substantially simpler (operations reduced from hundreds to dozens), leading to faster compilation and a more maintainable implementation. This case study demonstrates how proper initialization patterns and device-agnostic symbolic constants can lead to both cleaner code and more predictable performance, particularly in heterogeneous computing environments.
+
+# Introduction: 
 
 In the world of deep learning, performance optimizations often come from unexpected places. While many focus on algorithmic breakthroughs or hardware acceleration, sometimes meaningful improvements come from addressing subtle implementation details. This is the story of how a seemingly minor code restructuring led to important performance enhancements in a critical deep learning operation.
 
