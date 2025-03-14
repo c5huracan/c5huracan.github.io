@@ -41,7 +41,7 @@ By resolving this circular dependency, we could transform the Winograd constants
 
 To clarify, "small," "medium," and "large" here refer to the size of the input tensors being processed, not the kernel size itself. A large input tensor represents the substantial computational workloads found in the early layers of CNNs processing high-resolution images, while medium inputs might be found in middle network layers.
 
-# Test cases
+## Test cases
 test_cases = [
     # Small convolution (Winograd eligible)
     {"name": "Small (3x3 kernel)", "batch_size": 1, "in_channels": 3, "out_channels": 16, "input_size": 32, "kernel_size": 3},
