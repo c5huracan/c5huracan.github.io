@@ -10,7 +10,7 @@ In the world of deep learning, performance optimizations often come from unexpec
 
 tinygrad is an emerging deep learning framework designed with simplicity and performance in mind. Like all deep learning frameworks, it relies heavily on convolution operations - the computational backbone of convolutional neural networks (CNNs) that power everything from image recognition to autonomous vehicles.
 
-Winograd convolution is a specialized algorithm that reduces the multiplication operations needed in standard convolutions. Originally developed in the 1980s for digital signal processing, it found renewed relevance in deep learning where convolutions dominate computation time. The algorithm uses a clever mathematical trick: transform the input and filters, perform element-wise multiplication (cheaper than convolution), then transform back.
+A [Winograd convolution](https://arxiv.org/abs/1509.09308) is a specialized algorithm that reduces the multiplication operations needed in standard convolutions. Originally developed in the 1980s for digital signal processing, it found renewed relevance in deep learning where convolutions dominate computation time. The algorithm uses a clever mathematical trick: transform the input and filters, perform element-wise multiplication (cheaper than convolution), then transform back.
 
 These transformations rely on constant matrices with specific mathematical properties. How these constants are implemented might seem like a trivial detail - but as we'll see, it can make a meaningful difference in both code quality and performance.
 
