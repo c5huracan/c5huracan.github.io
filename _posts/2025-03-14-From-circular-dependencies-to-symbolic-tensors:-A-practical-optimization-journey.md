@@ -10,7 +10,7 @@ This exploration shows how proper initialization patterns and device-agnostic sy
 
 In the world of deep learning, performance optimizations often come from unexpected places. While many focus on algorithmic breakthroughs or hardware acceleration, sometimes meaningful improvements come from addressing subtle implementation details. This is the story of how a seemingly minor code restructuring led to important performance enhancements in a critical deep learning operation.
 
-## The Setting: tinygrad and Winograd Convolution
+## The Situation: tinygrad and Winograd Convolution
 
 tinygrad is an emerging deep learning framework designed with simplicity and performance in mind. Like all deep learning frameworks, it relies heavily on convolution operations - the computational backbone of convolutional neural networks (CNNs) that power everything from image recognition to autonomous vehicles.
 
@@ -18,7 +18,7 @@ A [Winograd convolution](https://arxiv.org/abs/1509.09308) is a specialized algo
 
 These transformations rely on constant matrices with specific mathematical properties. How these constants are implemented might seem like a trivial detail - but as we'll see, it can make a meaningful difference in both code quality and performance.
 
-## The Problem: A Circular Python Dependency
+## The Complication: A Circular Python Dependency
 
 When initially hacking on the tinygrad codebase, I encountered this error:
 
