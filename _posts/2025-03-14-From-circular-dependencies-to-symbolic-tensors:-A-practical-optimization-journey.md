@@ -71,7 +71,7 @@ While these performance numbers might seem modest individually, the real value l
 
 In the sections that follow, I'll walk through the journey of understanding this problem, exploring potential solutions, and implementing a fix that demonstrates an important principle: in computational frameworks, proper initialization of symbolic constants can lead to both cleaner code and better performance across a range of operations.
 
-# Technical Sections
+# Technical Details
 
 ## The Problem: Understanding Circular Dependencies
 
