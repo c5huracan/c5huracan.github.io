@@ -211,5 +211,3 @@ git branch backup-before-rebase
 ```
 
 This ensures you can always return to a known good state if things don't go as planned.
-
-What Git concepts do you find most challenging? Let me know in the comments below!
