@@ -27,7 +27,7 @@ The tech stack is straightforward but powerful:
 
 - **Data Sources**: 
   - Hacker News Firebase API for "Who is Hiring" job postings
-  - RemoteOK.com for remote-friendly positions (new addition; thank you @shuane!)
+  - RemoteOK.com for remote-friendly positions (new addition; thank you for the idea, @shuane!)
 - **Embeddings**: Google Gemini API for converting text to vector embeddings
 - **Matching**: Cosine similarity to compare resume and job vectors
 - **Skills Analysis**: Custom regex-based skill extraction (with a ton of optimization to avoid timeouts)
