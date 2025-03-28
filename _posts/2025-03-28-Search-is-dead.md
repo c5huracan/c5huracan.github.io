@@ -4,11 +4,11 @@
 
 ## The Death of Traditional Search
 
-Let's be honest - traditional keyword search for jobs can be challenging. You write "ML" instead of "Machine Learning"? Too bad, no match. You describe "building scalable systems" but don't explicitly say "system architecture"? The algorithm doesn't care about your actual skills.
+Let's be honest - traditional keyword search for jobs can be challenging. You type "ML" instead of "Machine Learning"? Too bad, no match. You describe "building scalable systems" but don't explicitly say "system architecture"? The algorithm doesn't care about your actual skills.
 
 Meanwhile, the big job sites claim to use AI matching but give you zero insight into why you matched with certain jobs. It's a black box that leaves you wondering if you should rewrite your entire resume just to game their system.
 
-I decided we could do better.
+I recently learned we could do better.
 
 ## The Resurrection: Hybrid Search
 
