@@ -163,7 +163,7 @@ By following this learning plan and focusing on practical skills, you'll be well
 
 Look at that! The system found matches for machine learning, Python, R, React, and AWS skills, but identified gaps in Go, Airflow, ETL, REST APIs, and data science. Then gemini-2.0-flash generated a detailed, week-by-week learning plan to help you develop those missing skills.
 
-Quick aside: **Factional** Engineer did you catch that? Had to look it up... twice to make sure I understood its meaning. Maybe this post should have been called *Soulless Work is Dead, Long Live Fractional Engineering* ;-)
+Quick aside: **Factional** Engineer - did you catch that? Had to look it up... twice to make sure I understood its meaning. Maybe this post should have been called *Soulless Work is Dead, Long Live Fractional Engineering* ;-)
 
 This isn't just "you should learn Go" - it's a complete curriculum with resources, practice exercises, and a logical progression. That's the difference between a generic job board and a tool that actually helps you grow your career.
 
