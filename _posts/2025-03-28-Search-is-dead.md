@@ -8,7 +8,7 @@ Let's be honest - traditional keyword search for jobs can be challenging. You ty
 
 Meanwhile, the big job sites claim to use AI matching but give you zero insight into why you matched with certain jobs. It's a black box that leaves you wondering if you should rewrite your entire resume just to game their system.
 
-I recently learned we could do better.
+I recently learned that we *can* do better.
 
 ## The Resurrection: Hybrid Search
 
