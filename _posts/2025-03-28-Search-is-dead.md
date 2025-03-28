@@ -32,7 +32,7 @@ The tech stack is straightforward but powerful:
 - **Matching**: Cosine similarity to compare resume and job vectors
 - **Skills Analysis**: Custom regex-based skill extraction (with a ton of optimization to avoid timeouts)
 - **Recommendations**: Upgraded to gemini-2.0-flash for even better personalized skill development plans
-- **Frontend**: Streamlit because I wanted to ship this fast
+- **Frontend**: Streamlit because I wanted to ship this fast - I swear solveit recommended it
 - **Cost**: Running on Google's free tier while they "improve their products" (read: train on our data)
 
 The code is modular with proper separation of concerns - embedding service, skill extraction, matching algorithm, and explanation generation all nicely decoupled.
