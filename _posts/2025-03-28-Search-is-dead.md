@@ -125,7 +125,7 @@ This isn't just "you should learn Go" - it's a complete curriculum with resource
 
 Building this wasn't all smooth sailing:
 
-1. **Regex Hell**: My first skill extraction patterns caused catastrophic backtracking on large job descriptions and while that failure is no longer a concern, it is still in need of improvement
+1. **Regex Hell**: My first skill extraction patterns caused catastrophic backtracking on the Hacker News job descriptions and while that failure is no longer a concern, the pattern matching is still in need of at least some improvement
 2. **API Costs**: Using caching to keep any potential long-term Gemini API costs reasonable, although the free tier helps greatly for now!
 3. **Unstructured Data**: Parsing Hacker News and RemoteOK job posts requires different approaches - the formats are wildly different
 4. **Balancing Signals**: More testing is needed to find the "best" weights between semantic matching and explicit skills
