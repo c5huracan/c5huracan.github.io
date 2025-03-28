@@ -87,6 +87,7 @@ Go by Example: https://gobyexample.com/
 Practice:
 Solve basic coding problems on platforms like HackerRank, LeetCode, or Codewars using Go.
 Write simple Go programs to manipulate data, perform calculations, and interact with the command line.
+
 Week 2: Data Structures and Concurrency
 
 Topics:
@@ -103,7 +104,9 @@ Practice:
 Implement data structures like stacks, queues, and linked lists in Go.
 Write concurrent programs that perform tasks in parallel using goroutines and channels.
 Handle errors gracefully in your programs.
+
 Week 3-4: Advanced Topics and Project
+
 Topics:
 Testing (unit tests, integration tests)
 Standard Library: net/http, encoding/json, io, os, time
