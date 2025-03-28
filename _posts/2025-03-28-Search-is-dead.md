@@ -1,4 +1,4 @@
-# Search is Dead, Long Live Search: How I Built a Better Job Matching Tool
+# Search is Dead, Long Live Hybrid Search: How I Built a Better Job Matching Tool
 
 **TL;DR**: I am tapping the Hacker News Firebase API and RemoteOK.com to grab job postings, Google Gemini for the text embeddings with cosine similarity distance from Lesson 9, and Google gemini-2.0-flash for the skills development plan generation. All running on Google's free tier while they "improve their products" (you are welcome Google!).
 
