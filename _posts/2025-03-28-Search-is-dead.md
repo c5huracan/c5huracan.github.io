@@ -132,7 +132,7 @@ Building this wasn't all smooth sailing:
 
 ## Try It Out For Yourself
 
-The tool is live on Streamlit. Just paste or upload a plain text version of your resume, set your preferences (remote work, locations), and hit the button. It now uses gemini-2.0-flash to generate even better personalized skill development plans for any missing skills.
+[The tool is live](https://pathfinder-mvp.streamlit.app/) on Streamlit. Just paste or upload a plain text version of your resume, set your preferences (remote work, locations), and hit the button. It now uses gemini-2.0-flash to generate even better personalized skill development plans for any missing skills.
 
 You can also choose your job source - Hacker News for the classic "Who is Hiring" posts or RemoteOK for remote-friendly positions. More sources coming soon!
 
