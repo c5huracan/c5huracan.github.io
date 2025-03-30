@@ -1,4 +1,4 @@
-# The Initial Port of the Pathfinder UI: Speed Versus Control 
+# The Initial Port of the Pathfinder UI: Speed *AND* Control 
 
 ## First Steps
 
