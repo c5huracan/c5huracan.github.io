@@ -33,13 +33,13 @@ This explicit nature isn't just verbose —it's a different mental model entirel
 
 ## The Rapid Prototyping Challenge
 
-I'm not fully convinced that the result from MonsterUI is better for rapid prototyping an MVP. The precise control comes with a cost: it's fiddly, time-consuming, and still needs adjustments. Meanwhile, the clock is ticking on porting other modules that deliver actual value to users.
+I'm not fully convinced that the result from MonsterUI is better for rapid prototyping an MVP. The precise control comes with a cost: it feels fiddly, time-consuming, and my UI still needs adjustments. Meanwhile, the clock is ticking on porting other modules that deliver actual value to users.
 
 To be fair, I was learning the library at the same time with little more than a tutorial or two under my belt, but this is common in development. While UI/interaction designers might appreciate this level of control, at this early stage of development, I have to ask: are we optimizing for the wrong metrics? Are we prioritizing theoretical flexibility over actual development velocity?
 
-The question isn't whether MonsterUI is good —it clearly is. The question is whether this level of specification is the right approach for every stage of development. Nonetheless, shoutout to @Isaac.Flath not only for his work on MonsterUI but also his awesome tutorials and his passion for teaching others! The library itself is impressive—it's just a matter of matching tools to contexts.
+The question isn't whether MonsterUI is good —it clearly is. The question is whether this level of specification is the right approach for every stage of development. Nonetheless, shoutout to @Isaac.Flath not only for his work on MonsterUI but also his awesome tutorials and his passion for teaching others! The library itself is impressive —it's just a matter of matching tools to contexts.
 
-## Component Deep Dives: Form Over Function?
+## Components: Form Over Function?
 
 My attempts at nesting an upload feature within a drop-and-drag component exposed an interesting tension in modern web development. Streamlit's `file_uploader` is straightforward and just works, while MonsterUI's `UploadZone` component presented styling challenges that diverted attention from core functionality.
 
