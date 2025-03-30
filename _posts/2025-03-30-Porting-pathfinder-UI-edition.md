@@ -1,4 +1,4 @@
-# The Initial Port of the Pathfinder UI: Speed <em>And</em> Control 
+# The Initial Port of the Pathfinder UI: Speed <i>And</i> Control 
 
 ## First Steps
 
