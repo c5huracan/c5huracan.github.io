@@ -84,4 +84,4 @@ While I appreciate the flexibility that component-based UI development offers, I
 
 This port revealed valuable insights about the tradeoffs in modern web development—insights that go beyond just technical implementation details. The next step is to apply what I've learned strategically, challenging the notion that more control always translates to better outcomes.
 
-Sometimes the most valuable contribution we can make is challening how to get the best of both worlds without breaking either one.
+Sometimes the most valuable contribution we can make is challenging how to get the best of both worlds without breaking either one.
