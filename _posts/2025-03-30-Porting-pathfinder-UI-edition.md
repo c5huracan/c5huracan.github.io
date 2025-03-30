@@ -67,11 +67,12 @@ The `text-black font-semibold mb-2` pattern isn't just verbose—it's a differen
 
 I found myself spending more time on margin adjustments than on the actual functionality that users care about. Is that really the best use of development resources, especially in early stages?
 
-## Unexpected Perspectives
+## Unexpected Learning Opportunities: Silver Linings in Friction
+One silver lining in this exploration: the process forced me to dive deeper into contextkit and RAG capabilities. These skills will transfer to other projects regardless of the UI framework I choose. There's value in pushing beyond established patterns, even when the immediate payoff isn't obvious.
 
-One valuable outcome: this process forced me to reconsider assumptions about web development approaches. These insights will transfer to other projects regardless of the UI framework. There's value in questioning established patterns, even when it leads to uncomfortable conclusions.
+That said, I am ready for the next training-run/finetune to bake this knowledge into the next model. The manual process of tweaking spacing and handling styling quirks is valuable to understand once, but should we really be repeating it for every component? If I'm being direct, I'd rather invest my time in refining the algorithm that matches people with jobs than debating whether a margin should be 3px or 5px.
 
-That said, I'm curious whether these implementation details should be the focus of our attention as developers. If I'm being candid, I'd rather spend my time on algorithms that match people with jobs than debating whether a margin should be 4px or 8px. Shouldn't our tools make these decisions easier, not harder?
+This raises a broader question about the evolution of development tools: are we building frameworks that optimize for the right metrics? As AI capabilities advance, shouldn't our tools be handling more of these implementation details rather than requiring developers to specify every aspect of the visual hierarchy? Perhaps the future isn't more control, but smarter defaults with selective overrides.
 
 ## Moving Forward: Finding My Path
 
