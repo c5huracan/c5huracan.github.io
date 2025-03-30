@@ -2,7 +2,7 @@
 
 ## First Steps
 
-Focusing on the UI layer for the last couple of coding sessions has been an enlightening exercise. I was pretty happy with my Streamlit experience and therefore had questions going into this port/replatforming of Pathfinder. Learning new libraries wasn't what I had planned to spend time on, and the thought of getting bogged down in pixel-perfect adjustments seemed like a distraction from more substantive work. MonsterUI clearly offers fine-grained control, but is that level of control always necessary? After all, I already had a working MVP with a UI/UX at least one earlier tester seems to like.
+Focusing on the UI layer for the last couple of coding sessions has been an enlightening exercise. I was pretty happy with my Streamlit experience and therefore had questions going into this port/replatforming of Pathfinder. Learning new libraries wasn't what I had planned to spend time on, and the thought of getting bogged down in pixel-perfect adjustments seemed like a distraction from more substantive work. MonsterUI clearly offers fine-grained control, but is that level of control always necessary? After all, I already have a working MVP with a UI/UX that at least one earlier tester seems to like.
 
 But sometimes exploring alternative paths reveals insights about both the destination and the journey itself.
 
