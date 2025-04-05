@@ -211,7 +211,7 @@ After cleaning the repository:
    - GitLab, GitHub, and other platforms may cache data
    - Some platforms like GitLab require waiting periods (30+ minutes) after history cleaning
    - Contact support if necessary for complete purging
-  
+
    **Notes about GitLab**: Platforms like GitLab require waiting periods after history cleaning for several important technical reasons:
    
    1. **Distributed Caching Systems**: 
