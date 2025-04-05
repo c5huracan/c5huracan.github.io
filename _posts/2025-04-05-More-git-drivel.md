@@ -90,7 +90,134 @@ git rm --cached .env
 git log --all -- .env
 ```
 
-This isn't just good practice—it's essential security hygiene.
+## Properly Cleaning Sensitive Data from Git History
+
+When sensitive data like API keys or credentials has been committed to a Git repository, removing it completely requires careful steps. Here's a detailed guide:
+
+## For Local Repositories (Not Yet Pushed)
+
+If you've only committed sensitive data locally and haven't pushed to a remote repository:
+
+1. **Use interactive rebase to edit history**:
+   ```bash
+   # Replace N with the number of commits to examine
+   git rebase -i HEAD~N
+   ```
+
+2. **In the editor that opens, change "pick" to "edit" for commits containing sensitive data**:
+   ```
+   edit 2c3a8b1 Add API integration with keys
+   pick 8d7f235 Update UI components
+   ```
+
+3. **When the rebase stops at the commit to edit**:
+   ```bash
+   # Remove the file from Git but keep it locally
+   git rm --cached .env
+   
+   # Update the commit
+   git commit --amend
+   
+   # Continue the rebase process
+   git rebase --continue
+   ```
+
+4. **Create a proper .gitignore file** if you haven't already:
+   ```bash
+   echo ".env" >> .gitignore
+   git add .gitignore
+   git commit -m "Add .env to .gitignore"
+   ```
+
+## For Repositories Already Pushed to Remote
+
+If sensitive data has been pushed to a remote repository, the process is more complex:
+
+### Option 1: Using BFG Repo-Cleaner (Recommended)
+
+BFG is faster and simpler than git filter-branch:
+
+1. **Download BFG Repo-Cleaner** from https://rtyley.github.io/bfg-repo-cleaner/
+
+2. **Create a fresh clone of your repository**:
+   ```bash
+   # Create a mirror clone
+   git clone --mirror git://example.com/my-repo.git
+   ```
+
+3. **Run BFG to remove the sensitive file**:
+   ```bash
+   # Replace .env with your sensitive file
+   java -jar bfg.jar --delete-files .env my-repo.git
+   ```
+
+4. **Clean up and update references**:
+   ```bash
+   cd my-repo.git
+   git reflog expire --expire=now --all
+   git gc --prune=now --aggressive
+   ```
+
+5. **Push the cleaned repository**:
+   ```bash
+   git push --force
+   ```
+
+### Option 2: Using git filter-branch
+
+If you can't use BFG:
+
+1. **Remove the file from all commits**:
+   ```bash
+   git filter-branch --force --index-filter \
+     "git rm --cached --ignore-unmatch .env" \
+     --prune-empty --tag-name-filter cat -- --all
+   ```
+
+2. **Force Git to remove references to old commits**:
+   ```bash
+   git reflog expire --expire=now --all
+   git gc --prune=now --aggressive
+   ```
+
+3. **Force push to remote**:
+   ```bash
+   git push --force
+   ```
+
+## Critical Follow-up Steps
+
+After cleaning the repository:
+
+1. **Consider all exposed credentials compromised**:
+   - Immediately rotate all API keys, passwords, and tokens that were exposed
+   - Generate new credentials for all services
+
+2. **Notify team members**:
+   - All collaborators must re-clone the repository or carefully reset their local copies
+   - Instructions for collaborators:
+     ```bash
+     # Fetch the latest state
+     git fetch --all
+     
+     # Reset to match the remote
+     git reset --hard origin/main
+     
+     # OR clone fresh
+     git clone https://github.com/user/repo.git new-clone
+     ```
+
+3. **Check hosting platform policies**:
+   - GitHub, GitLab, and other platforms may cache data
+   - Some platforms like GitLab require waiting periods (30+ minutes) after history cleaning
+   - Contact support if necessary for complete purging
+
+4. **Implement prevention measures**:
+   - Use .gitignore properly
+   - Consider pre-commit hooks to catch sensitive patterns
+   - Use environment variables or secure credential management tools
+
+Remember: The safest approach is to treat any credentials that have been committed to a repository as compromised, even after cleaning the history. This isn't just good practice—it's essential security hygiene.
 
 ## Branching: Your Safety Net for Experimentation
 
