@@ -208,11 +208,48 @@ After cleaning the repository:
      ```
 
 3. **Check hosting platform policies**:
-   - GitHub, GitLab, and other platforms may cache data
+   - GitLab, GitHub, and other platforms may cache data
    - Some platforms like GitLab require waiting periods (30+ minutes) after history cleaning
    - Contact support if necessary for complete purging
+  
+   **Notes about GitLab**: Platforms like GitLab require waiting periods after history cleaning for several important technical reasons:
+   
+   1. **Distributed Caching Systems**: 
+      Large Git hosting platforms use distributed caching systems across multiple servers. When you rewrite history and force push, the changes need time to propagate through all these caches. Some servers might still have the old data cached temporarily.
+   
+   2. **Background Processing**:
+      When you push changes, especially force pushes that rewrite history, platforms like GitLab don't process everything immediately. They queue certain operations like rebuilding repository data, updating search indexes, and regenerating project statistics to run asynchronously in the background.
+   
+   3. **Garbage Collection Cycles**:
+      Git repositories have their own garbage collection cycles on the server side. When you remove commits through history rewriting, the objects aren't immediately deleted but marked for collection during the next garbage collection run.
+   
+   4. **Reference Updates**:
+      All references to the old commits (including in issues, merge requests, and CI/CD pipelines) need to be updated across the entire platform, which is done in batches rather than instantly.
+   
+   5. **Backup Systems**:
+      Many platforms maintain point-in-time backups or snapshots. The waiting period ensures that your changes have been fully processed before new backups are created, preventing the sensitive data from being included in new backups.
+   
+   This waiting period helps ensure that when the process completes, the sensitive data is truly gone from all active systems. However, it's still important to remember that older backups might contain the sensitive data, which is why credential rotation is always recommended regardless of history cleaning.
 
-4. **Implement prevention measures**:
+   **Notes about GitHub**: Similar principles apply to GitHub, although there are some differences in implementation:
+   
+   GitHub also has distributed systems that don't update instantaneously after history rewrites. While GitHub doesn't explicitly state a specific waiting period like GitLab's 30+ minutes, they do acknowledge that:
+   
+   Cached Data Persistence: GitHub maintains various caches that might not immediately reflect history changes. This includes caches for the web interface, API responses, and search indexes.
+   
+   Background Processing: GitHub processes force pushes and history rewrites in the background, particularly for larger repositories.
+   
+   GitHub Pages: If you use GitHub Pages, there's a documented delay (often 10+ minutes) before changes propagate after force pushes.
+   
+   Repository Rebuilding: For significant history rewrites, GitHub may need to rebuild internal repository data structures.
+   
+   GitHub provides specific documentation for removing sensitive data through their help pages, using a tool called BFG Repo-Cleaner or git filter-branch. Their documentation notes that after using these tools, you should contact GitHub Support to request removal of cached views and references to the sensitive data from their servers.
+   
+   The key difference is that GitHub doesn't specify an exact waiting period, but the underlying technical reasons for delays are similar to GitLab's. GitHub Support may need to take additional actions on their end to fully purge sensitive data from all systems.
+   
+   Regardless of platform, the best practice remains the same: consider any pushed credentials compromised and rotate them immediately, even after cleaning the repository history.
+
+5. **Implement prevention measures**:
    - Use .gitignore properly
    - Consider pre-commit hooks to catch sensitive patterns
    - Use environment variables or secure credential management tools
