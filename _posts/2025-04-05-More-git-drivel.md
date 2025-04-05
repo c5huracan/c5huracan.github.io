@@ -249,7 +249,7 @@ After cleaning the repository:
    
    Regardless of platform, the best practice remains the same: consider any pushed credentials compromised and rotate them immediately, even after cleaning the repository history.
 
-5. **Implement prevention measures**:
+4. **Implement prevention measures**:
    - Use .gitignore properly
    - Consider pre-commit hooks to catch sensitive patterns
    - Use environment variables or secure credential management tools
