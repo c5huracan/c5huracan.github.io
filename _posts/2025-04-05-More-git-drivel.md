@@ -212,7 +212,14 @@ After cleaning the repository:
    - Some platforms like GitLab require waiting periods (30+ minutes) after history cleaning
    - Contact support if necessary for complete purging
 
-   **Notes about GitLab**: Platforms like GitLab require waiting periods after history cleaning for several important technical reasons:
+4. **Implement prevention measures**:
+   - Use .gitignore properly
+   - Consider pre-commit hooks to catch sensitive patterns
+   - Use environment variables or secure credential management tools
+
+Remember: The safest approach is to treat any credentials that have been committed to a repository as compromised, even after cleaning the history. This isn't just good practice—it's essential security hygiene.
+
+**Notes about GitLab**: Platforms like GitLab require waiting periods after history cleaning for several important technical reasons:
    
    1. **Distributed Caching Systems**: 
       Large Git hosting platforms use distributed caching systems across multiple servers. When you rewrite history and force push, the changes need time to propagate through all these caches. Some servers might still have the old data cached temporarily.
@@ -248,13 +255,6 @@ After cleaning the repository:
    The key difference is that GitHub doesn't specify an exact waiting period, but the underlying technical reasons for delays are similar to GitLab's. GitHub Support may need to take additional actions on their end to fully purge sensitive data from all systems.
    
    Regardless of platform, the best practice remains the same: consider any pushed credentials compromised and rotate them immediately, even after cleaning the repository history.
-
-4. **Implement prevention measures**:
-   - Use .gitignore properly
-   - Consider pre-commit hooks to catch sensitive patterns
-   - Use environment variables or secure credential management tools
-
-Remember: The safest approach is to treat any credentials that have been committed to a repository as compromised, even after cleaning the history. This isn't just good practice—it's essential security hygiene.
 
 ## Branching: Your Safety Net for Experimentation
 
