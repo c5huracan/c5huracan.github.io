@@ -235,13 +235,13 @@ After cleaning the repository:
    
    GitHub also has distributed systems that don't update instantaneously after history rewrites. While GitHub doesn't explicitly state a specific waiting period like GitLab's 30+ minutes, they do acknowledge that:
    
-   Cached Data Persistence: GitHub maintains various caches that might not immediately reflect history changes. This includes caches for the web interface, API responses, and search indexes.
+   1. Cached Data Persistence: GitHub maintains various caches that might not immediately reflect history changes. This includes caches for the web interface, API responses, and search indexes.
    
-   Background Processing: GitHub processes force pushes and history rewrites in the background, particularly for larger repositories.
+   2. Background Processing: GitHub processes force pushes and history rewrites in the background, particularly for larger repositories.
    
-   GitHub Pages: If you use GitHub Pages, there's a documented delay (often 10+ minutes) before changes propagate after force pushes.
+   3. GitHub Pages: If you use GitHub Pages, there's a documented delay (often 10+ minutes) before changes propagate after force pushes.
    
-   Repository Rebuilding: For significant history rewrites, GitHub may need to rebuild internal repository data structures.
+   4. Repository Rebuilding: For significant history rewrites, GitHub may need to rebuild internal repository data structures.
    
    GitHub provides specific documentation for removing sensitive data through their help pages, using a tool called BFG Repo-Cleaner or git filter-branch. Their documentation notes that after using these tools, you should contact GitHub Support to request removal of cached views and references to the sensitive data from their servers.
    
