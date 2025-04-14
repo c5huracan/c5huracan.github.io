@@ -25,6 +25,20 @@ I initially considered the full enterprise stack:
 
 For an established product with thousands of users, this might be appropriate. But for an MVP? Simplicity is key. Spoiler alert: I landed on FastHTML, SQLite via Fastlite, and Sentence-Transformers. A lightweight stack that let me focus on proving the concept before scaling up.
 
+## The Tech Stack Debate
+
+The tech industry offers powerful solutions for complex problems. Enterprise-grade technologies like microservices, Kubernetes clusters, and distributed systems have their place in large-scale applications. But sometimes we reach for these tools out of habit rather than necessity.
+
+I initially considered the full enterprise stack:
+* FastAPI for the backend
+* React with TypeScript for the frontend
+* Vector databases like Pinecone or Weaviate
+* Multiple microservices for different components
+
+For an established product with thousands of users, this might be appropriate. But for an MVP? Simplicity is key. Spoiler alert: I landed on FastHTML, SQLite via Fastlite for data storage (yes, even for vector embeddings!), and Sentence-Transformers. A lightweight stack that let me focus on proving the concept before scaling up.
+
+The choice to use SQLite for storing vector embeddings might raise some eyebrows. While specialized vector databases would be necessary for production scale, SQLite proved sufficient for proving the concept. By storing the embeddings as JSON strings in SQLite, I avoided an entire category of infrastructure complexity while still getting good enough performance for initial testing. This approach won't scale to thousands of documents, but it perfectly serves the MVP purpose of demonstrating value before investing in more complex infrastructure.
+
 ## The Core Components
 
 The system works through four interconnected processes that transform raw documents into a web of connected knowledge. The document upload provides the raw material. The text chunking breaks it down into digestible pieces. The embedding generation translates human language into mathematical vectors. And the similarity search - this is where the magic happens - connects ideas across document boundaries.
