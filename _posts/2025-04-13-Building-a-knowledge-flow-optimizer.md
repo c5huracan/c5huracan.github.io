@@ -27,6 +27,8 @@ For an established product with thousands of users, this might be appropriate. B
 
 The choice to use SQLite for storing vector embeddings might raise some eyebrows. While specialized vector databases would be necessary for production scale, SQLite proved sufficient for proving the concept. By storing the embeddings as JSON strings in SQLite, I avoided an entire category of infrastructure complexity while still getting good enough performance for initial testing. This approach won't scale to thousands of documents, but it perfectly serves the MVP purpose of demonstrating value before investing in more complex infrastructure.
 
+For the embedding model itself, Sentence-Transformers proved to be another excellent choice. Instead of using OpenAI's embedding API and adding both a dependency and ongoing costs, I opted for the open-source all-MiniLM-L6-v2 model. At only 90MB in size, it runs efficiently even without a GPU, yet still produces high-quality 384-dimensional embeddings that capture semantic relationships between text chunks remarkably well. The model strikes an ideal balance between performance and resource requirements - exactly what you want in an MVP where you're trying to validate an idea without overinvesting in infrastructure.
+
 ## The Core Components
 
 The system operates through four complementary processes that work together to create connections between documents. Document upload serves as the entry point, allowing users to add content to the system. Text chunking divides longer documents into manageable segments for more precise analysis. Embedding generation converts these text chunks into vector representations using AI. Finally, similarity search identifies connections between documents based on semantic proximity.
