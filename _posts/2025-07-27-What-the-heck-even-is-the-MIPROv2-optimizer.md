@@ -2,7 +2,7 @@
 
 ## Intro:
 
-MIPROv2 (Multiprompt Instruction Proposal Optimizer v2) is a powerful DSPy optimizer designed to jointly optimize both prompt instructions and few-shot examples for language model programs. It works by generating candidate instructions and demonstrations, then uses Bayesian Optimization to search for the best combination that maximizes your chosen evaluation metric, making it suitable for both few-shot and zero-shot prompt optimization ([MIPROv2 API](https://dspy.ai/api/optimizers/MIPROv2/#dspy.MIPROv2.compile), [How MIPROv2 works](https://dspy.ai/api/optimizers/MIPROv2/#how-miprov2-works)).
+MIPROv2 (Multiprompt Instruction Proposal Optimizer v2) is a powerful DSPy optimizer designed to jointly optimize both prompt instructions and few-shot examples for language model programs. It works by generating candidate instructions and demonstrations, then uses Bayesian Optimization to search for the best combination that maximizes your chosen evaluation metric, making it suitable for both few-shot and zero-shot prompt optimization ([MIPROv2 API](https://dspy.ai/api/optimizers/MIPROv2/), [How MIPROv2 works](https://dspy.ai/api/optimizers/MIPROv2/#how-miprov2-works)).
 
 ## Preliminary breakdown:
 
