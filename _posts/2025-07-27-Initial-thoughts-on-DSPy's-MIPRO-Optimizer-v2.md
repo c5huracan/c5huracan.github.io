@@ -6,7 +6,7 @@ In the world of language model pipelines, hyper-parameter tuning is often the di
 
 This post takes a practical look at tuning DSPy’s `max_iters`, `num_trials`, and their close relatives. Expect a few stories from the trenches, some advice on avoiding common missteps, and a clear-eyed take on when the defaults will do the job—and when it’s worth rolling up your sleeves.
 
-## The Role of `max_iters`
+## Setting the Stage: The Role of `max_iters`
 
 Not every setting in DSPy is a hyper-parameter, even if it looks important. Take `max_iters`: this one is more of a configuration knob. When you set it on a `dspy.ReAct` agent, you’re just telling the agent how many steps it can take to reason or use tools before it needs to wrap things up ([ReAct - DSPy](https://dspy.ai/api/modules/ReAct/)).
 
