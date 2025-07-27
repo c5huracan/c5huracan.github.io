@@ -19,13 +19,16 @@ When tuning DSPy optimizers, the relationship between `auto`, `num_trials`, and 
 The interplay here is important. If you forget to set one of these when `auto=None`, DSPy will remind you—sometimes with a less-than-friendly error. More trials and candidates can improve results, but they also increase compute time and cost. The trick is to start with moderate values, observe the optimizer’s behavior, and scale up only if you see clear gains.
 
 ```python
-# Example: Using auto to let DSPy pick defaults
+import dspy
+from dspy.datasets import HotPotQA
+
+# Example 1: Using auto to let DSPy pick defaults
 tp_auto = dspy.MIPROv2(metric=dspy.evaluate.answer_exact_match, auto="light")
 optimized_program_auto = tp_auto.compile(
     dspy.ReAct("question -> answer"),
     trainset=[x.with_inputs('question') for x in HotPotQA(train_seed=2024, train_size=500).train]
 )
-# Example: Manually specifying num_trials and num_candidates
+# Example 2: Manually specifying num_trials and num_candidates
 tp_manual = dspy.MIPROv2(
     metric=dspy.evaluate.answer_exact_match,
     auto=None,
@@ -45,7 +48,7 @@ Tuning one hyper-parameter often means you’ll need to revisit others. For exam
 This is where manually splitting your data into `trainset` and `valset` becomes useful. By controlling the size of each, you can ensure your validation set is large enough to support your chosen batch sizes and optimization rounds ([Optimization Overview - DSPy](https://dspy.ai/learn/optimization/overview/)). A common approach is to shuffle your data and allocate a larger portion to validation than you might in traditional machine learning, since prompt optimizers often benefit from more validation examples. This hands-on approach gives you better control and helps avoid frustrating runtime errors.
 
 ```python
-# Example: Manually splitting data into trainset and valset for better control
+# Example 3: Manually splitting data into trainset and valset for better control
 import random
 
 data = [x.with_inputs('question') for x in HotPotQA(train_seed=2024, train_size=500).train]
