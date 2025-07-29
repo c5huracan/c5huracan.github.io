@@ -8,6 +8,8 @@ The work focuses on tool selection and vulnerability assessment, exploring impro
 
 This post covers the main elements of this development, including its architecture, innovations, and potential uses.
 
+[Code available on GitHub](https://github.com/c5huracan/a1-agent-exploration/tree/dspy-optimization)
+
 ## 2. Progress Overview
 
 Development of the DSPy A1 agent represents a step toward replacing manual prompt engineering with learned optimization. By utilizing **MIPROv2**, the agent can adapt based on examples rather than static prompts.
@@ -115,6 +117,9 @@ The agent integrates **LiteLLM** to leverage advanced language models for improv
 ```python
 lm = dspy.LM(model="anthropic/claude-3-5-haiku-20241022")
 ```
+
+[View the complete DSPy A1 agent implementation on GitHub](https://github.com/c5huracan/a1-agent-exploration/tree/dspy-optimization)
+
 
 This integration allows the agent to better understand context and nuances in tasks, leading to more accurate assessments and tool selections.
 
