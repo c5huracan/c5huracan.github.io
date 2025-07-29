@@ -1,4 +1,4 @@
-# An Implementation of Multiple A1 Agents with DSPy and the MIPROv2 Optimizer: What Can Possibly Go Wrong?
+# An Exploration of Multiple A1 Agents with DSPy and the MIPROv2 Optimizer: What Can Possibly Go Wrong?
 
 ## 1. Introduction
 
