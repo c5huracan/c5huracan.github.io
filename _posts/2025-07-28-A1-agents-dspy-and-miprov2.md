@@ -8,7 +8,7 @@ This agent focuses on selecting tools and assessing vulnerabilities more effecti
 
 This post will cover the main elements of this development, including its architecture, innovations, and potential uses.
 
-## 2. Major Achievement
+## 2. Initial Progress 
 
 The completion of the DSPy A1 agent marks a key milestone in the project. This agent successfully replaces the previous reliance on manual prompt engineering with a learned optimization approach. By utilizing **MIPROv2**, the agent can adapt and improve its performance based on real-world examples rather than static prompts.
 
@@ -16,7 +16,7 @@ This shift not only enhances the efficiency of the agent but also allows for a m
 
 Overall, this achievement lays a solid foundation for future developments and applications in AI, demonstrating the potential of learned optimization in practical scenarios.
 
-## 3. Technical Breakthrough
+## 3. Technical Enhancement
 
 The architecture of the DSPy A1 agent is built on several key components that contribute to its effectiveness and adaptability. 
 
