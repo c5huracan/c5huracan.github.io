@@ -4,6 +4,8 @@ Ever wondered how to train an AI agent to be really good at a specific task with
 
 Instead of feeding our AI millions of examples, we're going to show you how to create a small, carefully crafted "answer key" and let the system figure out the best way to solve problems on its own.
 
+[New code available on GitHub](https://github.com/c5huracan/a1-agent-exploration/tree/miprov2-optimized)
+
 ## The Big Picture: What We're Building
 
 Imagine you're creating an AI security analyst that needs to examine smart contracts for vulnerabilities. Traditional approaches might require thousands of labeled examples. But what if we could teach it with just a handful of perfect examples and let it optimize itself?
