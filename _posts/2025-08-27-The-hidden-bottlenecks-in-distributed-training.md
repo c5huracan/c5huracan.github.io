@@ -24,7 +24,7 @@ Distributed training introduces a third constraint that fundamentally changes th
 
 Where Communication Intensity (CI) measures FLOPs per byte communicated across the network, analogous to Arithmetic Intensity (AI) for on-chip memory.
 
-Consider training a 7B parameter model on H100s with bfloat16 precision. For AllReduce¹ gradient synchronization, the Communication Intensity becomes:
+Consider training a 7B parameter model on H100s with bfloat16 precision. For AllReduce[^1] gradient synchronization, the Communication Intensity becomes:
 
 **CI = 3 × batch_size × sequence_length / 2**
 
@@ -69,11 +69,11 @@ The distributed roofline framework provides a solid foundation for understanding
 
 Yet empirical studies reveal a troubling gap. Research shows that popular DNN systems achieve only 2.5x speedup on 64 GPUs connected by 56 Gbps networks—far below even conservative expectations of 15-20x improvement.
 
-The scaling problems extend beyond simple bandwidth limitations. Meta's production experience with RoCE² networks reveals that "fine-grained synchronization requires handling millions of small sync operations" with cumulative overhead that significantly impacts large inter-node transfers.
+The scaling problems extend beyond simple bandwidth limitations. Meta's production experience with RoCE[^2] networks reveals that "fine-grained synchronization requires handling millions of small sync operations" with cumulative overhead that significantly impacts large inter-node transfers.
 
 Even more concerning, studies of GPU utilization in real clusters show performance plateauing at 60-70% despite advanced communication libraries and optimized scheduling. This suggests fundamental inefficiencies that theoretical models miss entirely.
 
-FSDP³ implementations demonstrate the memory-communication trade-off starkly: while reducing GPU memory usage by over 60%, training time increases up to 6x compared to standard data parallelism (DDP⁴).
+FSDP[^3] implementations demonstrate the memory-communication trade-off starkly: while reducing GPU memory usage by over 60%, training time increases up to 6x compared to standard data parallelism (DDP[^4]).
 
 These empirical findings reveal that our theoretical framework, while useful, misses critical real-world factors. The distributed roofline assumes perfect AllReduce efficiency and predictable network behavior, but reality introduces several hidden costs:
 
@@ -111,12 +111,10 @@ By combining theoretical frameworks with empirical profiling, you can make infor
 
 ---
 
-**Footnotes:**
+[^1]: **AllReduce**: Communication pattern that efficiently averages gradients across all GPUs in distributed training
 
-¹ **AllReduce**: Communication pattern that efficiently averages gradients across all GPUs in distributed training
+[^2]: **RoCE**: RDMA over Converged Ethernet - high-performance networking protocol enabling low-latency communication over standard Ethernet
 
-² **RoCE**: RDMA over Converged Ethernet - high-performance networking protocol enabling low-latency communication over standard Ethernet
+[^3]: **FSDP**: Fully Sharded Data Parallel - distributes model parameters, gradients, and optimizer states across GPUs to reduce memory usage
 
-³ **FSDP**: Fully Sharded Data Parallel - distributes model parameters, gradients, and optimizer states across GPUs to reduce memory usage
-
-⁴ **DDP**: Distributed Data Parallel - replicates the full model on each GPU, only synchronizing gradients during training
+[^4]: **DDP**: Distributed Data Parallel - replicates the full model on each GPU, only synchronizing gradients during training
