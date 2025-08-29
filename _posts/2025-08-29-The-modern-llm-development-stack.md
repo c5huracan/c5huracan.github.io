@@ -203,3 +203,11 @@ For teams building on LLMs today, the question isn't whether to adopt these patt
 [^5]: https://github.com/AnswerDotAI/cosette
 [^6]: https://github.com/fastai/nbdev
 [^7]: https://nbdev.fast.ai/
+
+[^1]: [https://github.com/BerriAI/litellm](https://github.com/BerriAI/litellm)
+[^2]: https://litellm.vercel.app/
+[^3]: https://github.com/AnswerDotAI/claudette
+[^4]: https://claudette.answer.ai/
+[^5]: https://github.com/AnswerDotAI/cosette
+[^6]: https://github.com/fastai/nbdev
+[^7]: https://nbdev.fast.ai/
