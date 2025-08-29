@@ -7,24 +7,13 @@
 - **Literate Programming**: Documentation-first development approach used by these tools
 - **The Vision**: "Lisette" - hypothetical hybrid combining LiteLLM's flexibility with Claudette's UX
 
-## Links
-- [LiteLLM](https://github.com/BerriAI/litellm)
-- [LiteLLM Docs](https://litellm.vercel.app/)
-- [Claudette](https://github.com/AnswerDotAI/claudette)
-- [Claudette Docs](https://claudette.answer.ai/)
-- [Cosette](https://github.com/AnswerDotAI/cosette)
-- [nbdev](https://github.com/fastai/nbdev)
-- [nbdev Docs](https://nbdev.fast.ai/)
-
----
-
 Working with Large Language Models today means navigating a fragmented ecosystem. OpenAI uses one API format, Anthropic another, Azure has its own authentication flow, AWS Bedrock requires different setup entirely, and each new provider brings fresh complexity. For developers building production applications, this creates a maintenance nightmare of conditional logic and provider-specific error handling.
 
 Enter a new generation of tools designed to solve these integration challenges: LiteLLM for universal API access, Claudette and Cosette for provider-specific optimization, and the literate programming approach that's changing how we document and develop these integrations.
 
 ## LiteLLM: The Universal LLM Gateway
 
-LiteLLM acts as a translation layer that converts any LLM API call into OpenAI's format. Instead of writing separate code paths for each provider, you make one standardized call that LiteLLM routes appropriately.
+LiteLLM[^1] acts as a translation layer that converts any LLM API call into OpenAI's format. Instead of writing separate code paths for each provider, you make one standardized call that LiteLLM routes appropriately.
 
 ```python
 # Installation: pip install litellm
@@ -54,13 +43,13 @@ response = completion(
 )
 ```
 
-Beyond API unification, LiteLLM provides production essentials: authentication management, load balancing across multiple instances, spend tracking, and automatic failover. This addresses the operational complexity that emerges when you move from prototype to production.
+Beyond API unification, LiteLLM provides production essentials: authentication management, load balancing across multiple instances, spend tracking, and automatic failover. This addresses the operational complexity that emerges when you move from prototype to production. For detailed documentation, see the LiteLLM docs[^2].
 
 The value proposition is immediate: eliminate conditional logic, reduce maintenance overhead, and gain operational visibility across all your LLM usage.
 
 ## Claudette: Beyond API Compatibility
 
-While LiteLLM focuses on universal compatibility, Claudette optimizes specifically for Anthropic's Claude. It's a high-level wrapper that automates the repetitive parts of Claude integration while preserving full control over advanced features.
+While LiteLLM focuses on universal compatibility, Claudette[^3] optimizes specifically for Anthropic's Claude. It's a high-level wrapper that automates the repetitive parts of Claude integration while preserving full control over advanced features.
 
 The core abstraction is the Chat class, which maintains conversation state automatically:
 
@@ -87,11 +76,11 @@ result = chat_with_tools("What's the weather in Paris?")
 
 Claudette shines with Claude's Tool Use API, automatically handling the request-response cycle that typically requires manual orchestration. It can call Python functions directly, bridging the gap between Claude's reasoning and your application logic.
 
-What sets Claudette apart is its "literate nbdev" implementation - the library's source code is a rendered Jupyter notebook with explanations, examples, and design rationale embedded directly in the codebase.
+What sets Claudette apart is its "literate nbdev" implementation - the library's source code is a rendered Jupyter notebook with explanations, examples, and design rationale embedded directly in the codebase. The complete documentation[^4] showcases this approach beautifully.
 
 ## Cosette: Claudette's OpenAI Counterpart
 
-Cosette applies the same high-level approach to OpenAI's GPT models. As "Claudette's sister," it provides a stateful Chat interface that simplifies GPT integration beyond what the raw OpenAI SDK offers.
+Cosette[^5] applies the same high-level approach to OpenAI's GPT models. As "Claudette's sister," it provides a stateful Chat interface that simplifies GPT integration beyond what the raw OpenAI SDK offers.
 
 ```python
 # Installation: pip install cosette
@@ -123,7 +112,7 @@ Literate programming, introduced by Donald Knuth in 1984, inverts the traditiona
 
 The philosophy: "concentrate rather on explaining to human beings what we want a computer to do" rather than instructing computers directly.
 
-Modern implementations like nbdev bring this concept to Jupyter notebooks, where the entire development process happens in an environment that seamlessly blends explanation, code, tests, and documentation. The notebook becomes both the development environment and the final documentation site.
+Modern implementations like nbdev[^6] bring this concept to Jupyter notebooks, where the entire development process happens in an environment that seamlessly blends explanation, code, tests, and documentation. The notebook becomes both the development environment and the final documentation site. The nbdev documentation[^7] itself demonstrates this approach in action.
 
 This approach addresses a chronic problem in software development: documentation that becomes outdated the moment it's written. In literate programming, documentation and code evolve together because they're the same artifact.
 
@@ -203,3 +192,10 @@ The literate programming approach underlying these tools suggests something deep
 
 For teams building on LLMs today, the question isn't whether to adopt these patterns, but which combination best fits your specific constraints and ambitions.
 
+[^1]: https://github.com/BerriAI/litellm
+[^2]: https://litellm.vercel.app/
+[^3]: https://github.com/AnswerDotAI/claudette
+[^4]: https://claudette.answer.ai/
+[^5]: https://github.com/AnswerDotAI/cosette
+[^6]: https://github.com/fastai/nbdev
+[^7]: https://nbdev.fast.ai/
