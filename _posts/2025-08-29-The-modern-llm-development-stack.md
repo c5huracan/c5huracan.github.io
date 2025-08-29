@@ -194,6 +194,8 @@ The literate programming approach underlying these tools suggests something deep
 
 For teams building on LLMs today, the question isn't whether to adopt these patterns, but which combination best fits your specific constraints and ambitions.
 
+## Footnotes
+
 [^1]: https://github.com/BerriAI/litellm
 [^2]: https://litellm.vercel.app/
 [^3]: https://github.com/AnswerDotAI/claudette
