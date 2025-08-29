@@ -7,6 +7,10 @@
 - **Literate Programming**: Documentation-first development approach used by these tools
 - **The Vision**: "Lisette" - hypothetical hybrid combining LiteLLM's flexibility with Claudette's UX
 
+---
+
+## Introduction
+
 Working with Large Language Models today means navigating a fragmented ecosystem. OpenAI uses one API format, Anthropic another, Azure has its own authentication flow, AWS Bedrock requires different setup entirely, and each new provider brings fresh complexity. For developers building production applications, this creates a maintenance nightmare of conditional logic and provider-specific error handling.
 
 Enter a new generation of tools designed to solve these integration challenges: LiteLLM for universal API access, Claudette and Cosette for provider-specific optimization, and the literate programming approach that's changing how we document and develop these integrations.
