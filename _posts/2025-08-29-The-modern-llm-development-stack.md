@@ -8,12 +8,13 @@
 - **The Vision**: "Lisette" - hypothetical hybrid combining LiteLLM's flexibility with Claudette's UX
 
 ## Links
-| Tool | Repository | Documentation |
-|------|------------|---------------|
-| LiteLLM | [GitHub](https://github.com/BerriAI/litellm) | [Docs](https://litellm.vercel.app/) |
-| Claudette | [GitHub](https://github.com/AnswerDotAI/claudette) | [Docs](https://claudette.answer.ai/) |
-| Cosette | [GitHub](https://github.com/AnswerDotAI/cosette) | - |
-| nbdev | [GitHub](https://github.com/fastai/nbdev) | [Docs](https://nbdev.fast.ai/) |
+- [LiteLLM](https://github.com/BerriAI/litellm)
+- [LiteLLM Docs](https://litellm.vercel.app/)
+- [Claudette](https://github.com/AnswerDotAI/claudette)
+- [Claudette Docs](https://claudette.answer.ai/)
+- [Cosette](https://github.com/AnswerDotAI/cosette)
+- [nbdev](https://github.com/fastai/nbdev)
+- [nbdev Docs](https://nbdev.fast.ai/)
 
 ---
 
