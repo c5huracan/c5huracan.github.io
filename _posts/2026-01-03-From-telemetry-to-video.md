@@ -157,7 +157,3 @@ The specific datasets don't matter. The pattern does.
 **Beyond AV and robotics**: Any domain with multimodal data that wasn't designed to link up. Medical imaging and clinical notes. Financial transactions and news feeds. IoT sensor logs and maintenance records. The trick is finding the domain-specific "physics" that connects them. Sometimes it's actual physics. Sometimes it's a shared business process. Sometimes it's time and geography.
 
 The real takeaway? Datasets are more connected than they look. You just have to find the bridge.
-
----
-
-How's that look? Ready to set up the GitHub repo?
