@@ -1,6 +1,6 @@
 # From Telemetry to Video: Bridging comma.ai Datasets with the Power of Physics and Agents
 
-## Hook
+## Introduction
 
 Imagine if an AI agent could find the moments where a self-driving car struggled, then track down similar video footage without you manually sifting through millions of rows of data?
 
@@ -124,7 +124,7 @@ The agent found edge cases where openpilot's desired lateral acceleration diverg
 
 Here's what matched segments look like:
 
-![Matched segments showing speed and yaw rate](attachment:9f0022bd-3efb-4c5e-b29f-5cf6a8d73f28)
+![Matched segments showing speed and yaw rate](images/matched_segments.png)
 
 The first segment shows acceleration with a significant yaw event mid-drive. The second shows variable speed through a curve. Both have dynamics similar to the edge cases the agent found in the steering data.
 
