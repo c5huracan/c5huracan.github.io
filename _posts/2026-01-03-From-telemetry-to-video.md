@@ -8,7 +8,7 @@ That's what I built. Two open datasets from comma.ai, a physics insight, and a f
 
 The rub? The datasets have no direct link between them. None. So I made one, using the power of physics.
 
-**A note on process:** This project was developed iteratively in SolveIt, with Claude as a coding partner. Small steps, test often, refine. The same way the agent works, actually.
+**A note on process:** This project was developed iteratively in SolveIt, with Claude as a coding and writing partner. Small steps, test often, refine. The same way the agent works, actually.
 
 ---
 
