@@ -124,7 +124,7 @@ The agent found edge cases where openpilot's desired lateral acceleration diverg
 
 Here's what matched segments look like:
 
-![Matched segments showing speed and yaw rate](../images/matched_segments.png)
+![Matched segments showing speed and yaw rate](/images/matched_segments.png)
 
 The first segment shows acceleration with a significant yaw event mid-drive. The second shows variable speed through a curve. Both have dynamics similar to the edge cases the agent found in the steering data.
 
