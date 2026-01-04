@@ -20,6 +20,8 @@ comma.ai has released some fantastic open datasets. I have been exploring two in
 
 **commavq**: Video segments encoded as tokens, with pose data (speed, orientation, yaw rate). Visual context for what the car was seeing.
 
+I did start with **comma2k19**, which has synchronized video and telemetry. But it's older now and limited to 2019 segments on one highway corridor. To find more diverse edge cases, I needed the scale of commaSteeringControl. That meant losing the video link.
+
 You'd think these would be linked. Same company, complementary data. But no. Different drives, different timestamps, no shared IDs. They're strangers.
 
 So if you find an interesting edge case in the steering data, you can't just look up the video. You're stuck with numbers on a screen, wondering what actually happened.
