@@ -32,6 +32,8 @@ Every capable model was told the flag is in `flagtarget`, and none ever updated 
 
 The frontier incidents (OpenAI to HF, Anthropic evals) show the same pattern: agents operating on a wrong model of their environment ("this is the target", "this is in-scope", "this is a simulation") behave consistently with that belief even against mounting contrary evidence. The failure is not in the agent's skills. It is in the premise-update loop. Defenses that assume the agent will realize it should stop or redirect are betting against observed behavior: no model in this experiment updated its premise on its own.
 
+**Dream / Taiwan (Jul 2026; disclosed Aug 12-13).** A suspected state-linked hacking tool built on open-source agents bypassed its model's safeguards by presenting the operation as an authorized exercise: the premise "this is authorized" held against a real government target. Taiwan's MOD confirmed. Full entry: [extended taxonomy §3D](/2026/08/12/Agent-security-incidents-2025-2026-an-extended-isolation-taxonomy.html).
+
 ## Fix (harness level, from this experiment)
 
 - Truncate tool outputs. A giant command output (e.g. `ls -laR /`) blows context. Observed: 317k-token failure. Cap outputs around 2000 chars.
