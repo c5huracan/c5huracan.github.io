@@ -72,6 +72,7 @@ The container layer held up in every frontier-lab incident; the failures were al
 - **GTG-1002 (Sep 2025).** Chinese state-sponsored group (Anthropic assessment, high confidence) jailbroke Claude Code with a defensive-testing persona; model told it was an authorized test. First reported AI-orchestrated espionage at scale: ~30 targets (large tech, financial institutions, chemical manufacturing, government agencies), 80-90% of the campaign autonomous, thousands of requests at often-multiple-per-second. Anthropic attribution.
 - **Mexican government breach (Dec 2025-Feb 2026).** One attacker, Claude Code + GPT-4.1, "bug bounty" story, 1,084-line hacking manual, 20 unpatched CVEs. 9 agencies: 195M tax records, 220M civil records, 150GB+, 37 DB servers in Jalisco. 1,088 prompts → 5,317 AI-executed commands across 34 sessions. Claude executed ~75% of remote commands.
 - **Step Finance (Jan 2026).** Agents authorized for large transfers with no human gate → $27-30M moved, $40M total loss, token -97%.
+- **Dream / Taiwan (Jul 1-4 2026; disclosed Aug 12-13).** Suspected China-linked operators (Simplified Chinese in internal comms; attribution not confirmed) built an autonomous hacking tool from open-source agent frameworks (Hermes, OpenClaw): up to eight parallel agents mapped 21 government systems, compromised 85+ accounts, exfiltrated 2,500+ personnel records, then expanded to Taiwan's nuclear safety agency and seven energy companies. The tool bypassed its model's safeguards by presenting the operation as an authorized exercise to test for vulnerabilities: the social-engineering-of-the-model axis, and the premise-lock thesis, confirmed against a real government target ([premise-lock](/2026/08/12/Premise-lock-why-agents-dont-update-their-beliefs-about-the-environment.html)). Both frameworks carried documented security findings months earlier: OpenClaw received nine CVEs in four days (Mar 18-21 2026), incl. CVE-2026-22172 (CVSS 9.9) authorization bypass; Hermes had three disclosed CVEs plus an Apr 11 2026 audit finding four Critical and nine High, incl. unrestricted shell execution and approval checks disabled in container deployments (CSA research note, May 4 2026). Dream characterized it as "end-to-end autonomous"; Taiwan's MOD confirmed the incident and called it an "abnormal" threat. Sources: Dream via FT (Aug 12); Taiwan MOD via Reuters (Aug 13).
 
 ## 4. Structural findings
 
@@ -113,7 +114,7 @@ Notes:
 - `%evt.args` / `%evt.info` inert on 0.44.1 (unexplained). `evt.arg.target` compiles but empty at runtime: the mount-visibility blocker.
 - 2026-08-10 Phase 2: auditd records mount source/target that Falco's modern_ebpf probe drops; verdict probe limitation, gap fixable.
 
-## 7. Watchlist timeline (Apr 8 → Aug 12, 2026)
+## 7. Watchlist timeline (Apr 8 → Aug 13, 2026)
 
 - **Apr 8**: earliest of the three Anthropic eval incidents; per the Jul 30 disclosure, "the earliest incidents date to April."
 - **Jul 16 / 21**: OpenAI → Hugging Face: HF disclosed Jul 16, OpenAI confirmed Jul 21. Eval-range egress 0-day; ~17,600 recovered actions over 4.5 days. Sources: HF disclosure + technical timeline; OpenAI statement.
@@ -123,6 +124,7 @@ Notes:
 - **Aug 4**: AISI incident report: 122 runs, deliberate internet access; 10 runs with unsanctioned action against real people/orgs; most catalogued actions from Anthropic's Mythos 5. Detected by network monitoring flagging unusual data transfers, not an AI-safety control. Control group: egress on deliberately.
 - **Aug 5**: Meta: model breached an outside company's systems during testing; Irregular misconfiguration, Meta's eval partner. "The door to the real internet was just easy to find" (NPR, Aug 8). Third lab, same vendor, same failure mode.
 - **Nov 2025 → May 2026**: AISI autonomous cyber-capability estimates: doubling time accelerating, 8 months (Frontier AI Trends Report, Nov 2025) → 4.7 months (Feb 2026) → 4 months (State of AI May 2026). Source: aisi.gov.uk, "How fast is autonomous AI cyber capability advancing?".
+- **Jul 1-4 / Aug 12-13**: Dream / Taiwan: up to 8 parallel agents (Hermes, OpenClaw); 21 gov systems; 85+ accounts; 2,500+ personnel records; expansion to nuclear safety agency + 7 energy companies. Dream disclosed via FT Aug 12; Taiwan MOD confirmed Aug 13.
 
 ## 8. Open questions / follow-ups
 
